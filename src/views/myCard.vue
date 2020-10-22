@@ -10,8 +10,7 @@
                       <!-- ... additional primary action content ... -->
 
                         <h3>{{title}}</h3>
-                        <p>{{mainContent}}</p>
-                        <ion-input></ion-input>
+                        <p v-html="mainContent"></p>
                     </div>
                     <div class="mdc-card__actions">
                       <div class="mdc-card__action-icons">

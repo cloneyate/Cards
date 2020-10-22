@@ -114,7 +114,7 @@ export default {
         {
           mediaUrl: "assets/images/apex.png",
           title: "Title3",
-          mainContent: "main content main  main content mainmain content mainmain content mainmain content mainmain content mainmain content mainmain content main",
+          mainContent: "main <h2 >content main</h2>  main content mainmain content mainmain content mainmain content mainmain content mainmain content mainmain content main",
         },
         {
           mediaUrl: "assets/images/apex.png",
