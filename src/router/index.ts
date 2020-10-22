@@ -3,12 +3,18 @@ import { RouteRecordRaw } from 'vue-router';
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '',
-    redirect: '/folder/Inbox'
+    path: '/',
+    redirect: '/dashboard'
   },
   {
-    path: '/folder/:id',
-    component: () => import ('../views/Folder.vue')
+    path: '/dashboard',
+    name: "dashboard",
+    component: () => import ('../views/Dashboard.vue')
+  },
+  {
+    path: '/settings',
+    name: "settings",
+    component: () => import ('../views/Settings.vue')
   }
 ]
 
