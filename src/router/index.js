@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
-import { RouteRecordRaw } from 'vue-router';
 
-const routes: Array<RouteRecordRaw> = [
+
+const routes = [
   {
     path: '/',
     redirect: '/dashboard'
@@ -9,14 +9,20 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/dashboard',
     name: "dashboard",
-    component: () => import ('../views/Dashboard.vue')
+    component: () => import ('@/views/Dashboard.vue')
   },
   {
     path: '/settings',
     name: "settings",
-    component: () => import ('../views/Settings.vue')
+    component: () => import ('@/views/Settings.vue')
+  },
+  {
+    path: '/create',
+    name: "create",
+    component: () => import ('@/views/create.vue')
   }
 ]
+
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),

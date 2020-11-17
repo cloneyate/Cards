@@ -1,5 +1,5 @@
 {
-  "appId": "io.ionic.starter",
+  "appId": "zhy.ionic.cards",
   "appName": "Cards",
   "bundledWebRuntime": false,
   "npmClient": "npm",

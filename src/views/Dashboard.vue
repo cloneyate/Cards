@@ -29,8 +29,8 @@
       </nav>
     </ion-content>
   </ion-menu>
-  <ion-page>
-    <ion-header :translucent="true">
+  <ion-page id="mu-content">
+    <ion-header>
       <ion-toolbar>
         <ion-buttons slot="start">
           <ion-menu-button></ion-menu-button>
@@ -40,23 +40,24 @@
           <ion-button>
             <ion-icon :ios="search" :md="search"></ion-icon>
           </ion-button>
-          <ion-button @click="takePhoto()">
+          <ion-button @click="scanQr()">
             <ion-icon :ios="scan" :md="scan"></ion-icon>
           </ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
-
-    <ion-content :scrollEvents="true" :scrollX="true">
-      <cards-list v-bind:cards-list-Data="reorder(cardsListData)"></cards-list>
+    
+    <ion-content fullscreen scrollEvents="true" overflow-scroll="true"  id="main">
+      <cards-list v-bind:cards-list-data="data['cardsListData']"></cards-list>
     </ion-content>
+    
     <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-      <ion-fab-button @click="addCard()">
+      <ion-fab-button @click="createModal()" >
         <ion-icon :ios="add" :md="add"></ion-icon>
       </ion-fab-button>
     </ion-fab>
 
-    <ion-router-outlet id="mu-content"></ion-router-outlet>
+    <!--<ion-router-outlet id="mu-content"></ion-router-outlet>-->
   </ion-page>
 </template>
 
@@ -74,11 +75,13 @@ import {
   IonHeader,
   IonTitle,
   IonToolbar,
+  modalController
 } from "@ionic/vue";
 import { appsSharp, settingsSharp, add, search, scan } from "ionicons/icons";
 import { useDashboard } from "@/composables/useDashboard";
-import { usePhotoGallery } from "@/composables/usePhotoGallery";
-import cardsList from "./cardsList.vue";
+import cardsList from "@/components/cardsList.vue";
+import {reactive} from 'vue'
+import Modal from './create.vue'
 
 export default {
   name: "dashboard",
@@ -95,77 +98,63 @@ export default {
     IonHeader,
     IonTitle,
     IonToolbar,
-    cardsList,
+    cardsList
   },
-  data: function () {
-    return {
-      cardsListData: [
-        {
-          mediaUrl: "assets/images/cgj.png",
-          title: "陈冠锦",
-          mainContent:
-            "是最大的老色皮  是最大的老色皮  是最大的老色皮  是最大的老色皮  是最大的老色皮  是最大的老色皮  ",
-        },
-        {
-          mediaUrl: "assets/images/apex.png",
-          title: "Title2",
-          mainContent: "main content",
-        },
-        {
-          mediaUrl: "assets/images/apex.png",
-          title: "Title3",
-          mainContent: "main <h2 >content main</h2>  main content mainmain content mainmain content mainmain content mainmain content mainmain content mainmain content main",
-        },
-        {
-          mediaUrl: "assets/images/apex.png",
-          title: "Title4",
-          mainContent: "main content",
-        },
-        {
-          mediaUrl: "assets/images/apex.png",
-          title: "Title5",
-          mainContent: "main content ",
-        },
-      ],
-    };
-  },
-  methods: {
-    reorder: function(list){
-      const cols=2;
-      const out=[];
-      let col=0
-      while(col<cols){
-        for(let i=0;i<list.length;i+=cols){
-          const val=list[i+col];
-          if (val!==undefined)
-          out.push(val);
-        }
-        col++
-      }
-      console.log(out)
-      return out
-    },
-    addCard: function () {
-      this.cardsListData.push({
-        mediaUrl: "assets/images/cgj.png",
-        title: "陈冠锦",
-        mainContent:
-          "是最大的老色皮  是最大的老色皮  是最大的老色皮  是最大的老色皮  是最大的老色皮  是最大的老色皮  ",
-      });
-    },
-  },
+
 
   setup() {
     const { scanQr } = useDashboard();
-    const { takePhoto } = usePhotoGallery();
+    const data=reactive({
+      cardsListData:[]
+    });
+    
+    const refresh=()=> {
+      const url = "http://127.0.0.1:5000/cards";
+      fetch(url, {
+        method: "GET",
+        mode: "cors",
+      })
+        .then((response) => response.json())
+        .then((myJson) => {
+          data["cardsListData"]= myJson["cardsListData"];
+        });
+
+    };
+
+    const createCard= () =>{
+      alert("点击了创建卡片按钮");
+    };
+
+
+    async function createModal(){
+      const modal= await modalController
+      .create(
+        {
+          component:Modal,
+        }
+      )
+      await modal.present()
+    }
+
+    
+     function dismissModal() {
+      modalController.dismiss()
+    }
+
+    refresh();
+
     return {
-      takePhoto,
       scanQr,
       appsSharp,
       settingsSharp,
       add,
       search,
-      scan
+      scan,
+      refresh,
+      data,
+      createCard,
+      createModal,
+      dismissModal
     };
   },
 };
@@ -189,6 +178,10 @@ ion-menu-button {
   line-height: 22px;
   color: #8c8c8c;
   margin: 0;
+}
+
+#main{
+  overflow: auto;
 }
 
 #container a {
@@ -248,4 +241,12 @@ ion-note {
   font-size: 16px;
   color: var(--ion-color-medium-shade);
 }
+ion-content{
+  overflow: auto;
+}
+
+div
+  {
+  overflow:auto;
+  }
 </style>

@@ -1,6 +1,4 @@
-import { ref, onMounted, watch } from 'vue';
-import { Plugins, CameraResultType, CameraSource, CameraPhoto, 
-Capacitor, FilesystemDirectory } from "@capacitor/core";
+import { Plugins, CameraResultType, CameraSource } from "@capacitor/core";
 
 export function useDashboard() {
     const { Camera } = Plugins;
@@ -11,6 +9,7 @@ export function useDashboard() {
         source: CameraSource.Camera,
         quality: 100
       });
+      return cameraPhoto
     };
   
     return {
