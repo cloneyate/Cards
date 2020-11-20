@@ -1,15 +1,18 @@
 <template>
-  <ion-menu content-id="mu-content">
-    <ion-content>
-      <ion-avatar>
-        <ion-img src="assets/images/apex.png"> </ion-img>
-      </ion-avatar>
-      <h1 id="username">Username</h1>
-      <ion-note>example@gmail.com</ion-note>
+  <aside class="mdc-drawer mdc-drawer--modal" ref="drawerRef">
+    <div class="mdc-drawer__header">
+      <img
+        src="assets/images/apex.png"
+        style="width: 64px; height: 64px; border-radius: 50%; margin-top: 24px"
+      />
+      <h3 class="mdc-drawer__title">Username</h3>
+      <h6 class="mdc-drawer__subtitle">example@gmail.com</h6>
+    </div>
+    <div class="mdc-drawer__content">
       <nav class="mdc-list">
-        <a
+        <router-link
           class="mdc-list-item mdc-list-item--activated"
-          href="/dashboard"
+          to="dashboard"
           aria-current="page"
           tabindex="0"
         >
@@ -18,97 +21,92 @@
             >dashboard</i
           >
           <span class="mdc-list-item__text">Dashboard</span>
-        </a>
-        <a class="mdc-list-item" href="/settings">
+        </router-link>
+        
+        <router-link class="mdc-list-item" to="settings">
           <span class="mdc-list-item__ripple"></span>
           <i class="material-icons mdc-list-item__graphic" aria-hidden="true"
             >settings</i
           >
           <span class="mdc-list-item__text">Settings</span>
-        </a>
+        </router-link>
       </nav>
-    </ion-content>
-  </ion-menu>
-  <ion-page id="mu-content">
-    <ion-header>
-      <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-menu-button></ion-menu-button>
-        </ion-buttons>
-        <ion-title>Cards</ion-title>
-        <ion-buttons slot="end">
-          <ion-button>
-            <ion-icon :ios="search" :md="search"></ion-icon>
-          </ion-button>
-          <ion-button @click="scanQr()">
-            <ion-icon :ios="scan" :md="scan"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
-    
-    <ion-content fullscreen scrollEvents="true" overflow-scroll="true"  id="main">
-      <cards-list v-bind:cards-list-data="data['cardsListData']"></cards-list>
-    </ion-content>
-    
-    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-      <ion-fab-button @click="createModal()" >
-        <ion-icon :ios="add" :md="add"></ion-icon>
-      </ion-fab-button>
-    </ion-fab>
+    </div>
+  </aside>
+  <div class="mdc-drawer-scrim"></div>
 
-    <!--<ion-router-outlet id="mu-content"></ion-router-outlet>-->
-  </ion-page>
+  <header
+    class="mdc-top-app-bar mdc-top-app-bar--fixed"
+    id="app-bar"
+    ref="topAppBarRef"
+  >
+    <div class="mdc-top-app-bar__row">
+      <section
+        class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start"
+      >
+        <button
+          class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button"
+        >
+          menu
+        </button>
+        <span class="mdc-top-app-bar__title">Cards</span>
+      </section>
+      <section
+        class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end"
+      >
+        <button
+          class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button"
+        >
+          search
+        </button>
+        <button
+          @click="scanQr()"
+          class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button"
+        >
+          qr_code_scanner
+        </button>
+      </section>
+    </div>
+  </header>
+
+  <main class="main-content" id="main-content" ref="mainContentRef">
+    <div class="mdc-top-app-bar--fixed-adjust">
+      <cards-list v-bind:cards-list-data="data['cardsListData']"></cards-list>
+    </div>
+    <router-link  :to="{ name: 'create'}">
+      <button class="create-fab mdc-fab mdc-fab--extended">
+        <div class="mdc-fab__ripple"></div>
+        <span class="material-icons mdc-fab__icon">add</span>
+        <span class="mdc-fab__label">Create</span>
+      </button>
+    </router-link>
+  </main>
+
+  <!--<ion-router-outlet id="mu-content"></ion-router-outlet>-->
 </template>
 
 <script>
-import {
-  IonPage,
-  IonAvatar,
-  IonMenu,
-  IonButtons,
-  IonButton,
-  IonFab,
-  IonFabButton,
-  IonIcon,
-  IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
-  modalController
-} from "@ionic/vue";
-import { appsSharp, settingsSharp, add, search, scan } from "ionicons/icons";
+import { appsSharp, settingsSharp, add } from "ionicons/icons";
 import { useDashboard } from "@/composables/useDashboard";
 import cardsList from "@/components/cardsList.vue";
-import {reactive} from 'vue'
-import Modal from './create.vue'
+import { onMounted, reactive, ref } from "vue";
+import { MDCTopAppBar } from "@material/top-app-bar";
+import { MDCDrawer } from "@material/drawer";
+
 
 export default {
   name: "dashboard",
   components: {
-    IonPage,
-    IonAvatar,
-    IonMenu,
-    IonIcon,
-    IonButtons,
-    IonButton,
-    IonFab,
-    IonFabButton,
-    IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
-    cardsList
+    cardsList,
   },
-
 
   setup() {
     const { scanQr } = useDashboard();
-    const data=reactive({
-      cardsListData:[]
+    const data = reactive({
+      cardsListData: [],
     });
-    
-    const refresh=()=> {
+
+    const refresh = () => {
       const url = "http://127.0.0.1:5000/cards";
       fetch(url, {
         method: "GET",
@@ -116,45 +114,47 @@ export default {
       })
         .then((response) => response.json())
         .then((myJson) => {
-          data["cardsListData"]= myJson["cardsListData"];
+          data["cardsListData"] = myJson["cardsListData"];
         });
-
     };
-
-    const createCard= () =>{
-      alert("点击了创建卡片按钮");
-    };
-
-
-    async function createModal(){
-      const modal= await modalController
-      .create(
-        {
-          component:Modal,
-        }
-      )
-      await modal.present()
-    }
-
-    
-     function dismissModal() {
-      modalController.dismiss()
-    }
 
     refresh();
 
+    const drawerRef = ref(null);
+    let drawer = null;
+    const topAppBarRef = ref(null);
+    let topAppBar = null;
+    const mainContentRef = ref(null);
+
+    onMounted(() => {
+      topAppBar = MDCTopAppBar.attachTo(topAppBarRef.value);
+      drawer = MDCDrawer.attachTo(drawerRef.value);
+      topAppBar.setScrollTarget(mainContentRef.value);
+
+      topAppBar.listen("MDCTopAppBar:nav", () => {
+        drawer.open = !drawer.open;
+      });
+      drawerRef.value.addEventListener("click", (event) => {
+        drawer.open = false;
+        console.log(event);
+      });
+      /*document.body.addEventListener("MDCDrawer:closed", () => {
+        mainContentRef.value.querySelector("input, button").focus();
+      });*/
+    });
     return {
       scanQr,
       appsSharp,
       settingsSharp,
       add,
-      search,
-      scan,
       refresh,
       data,
-      createCard,
-      createModal,
-      dismissModal
+
+      drawerRef,
+      drawer,
+      topAppBarRef,
+      topAppBar,
+      mainContentRef,
     };
   },
 };
@@ -162,91 +162,44 @@ export default {
 
 <style lang="scss" scoped>
 @use "@material/list";
+@use "@material/ripple";
+@use "@material/icon-button";
+@use "@material/top-app-bar/mdc-top-app-bar";
+@use "@material/drawer";
+@use "@material/fab";
+@include drawer.core-styles;
+@include drawer.dismissible-core-styles;
+@include drawer.modal-core-styles;
 @include list.core-styles;
 
-ion-menu-button {
-  color: var(--ion-color-primary);
+@include fab.core-styles;
+
+@include icon-button.core-styles;
+@include list.core-styles;
+
+body {
+  display: flex;
+  height: 100vh;
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
-}
-
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-  color: #8c8c8c;
-  margin: 0;
-}
-
-#main{
+.mdc-drawer-app-content {
+  flex: auto;
   overflow: auto;
+  position: relative;
 }
 
-#container a {
-  text-decoration: none;
-}
-ion-menu {
-  --width: 300px;
-}
-
-ion-menu ion-content {
-  --background: var(--ion-item-background, var(--ion-background-color, #fff));
-}
-ion-menu.md ion-content {
-  --padding-start: 8px;
-  --padding-end: 8px;
-  --padding-top: 20px;
-  --padding-bottom: 20px;
-}
-
-ion-menu.md ion-note {
-  margin-bottom: 20px;
-  padding-left: 16px;
-}
-
-#username {
-  font-size: 22px;
-  font-weight: 600;
-  min-height: 20px;
-  padding-left: 16px;
-}
-
-ion-menu.md ion-avatar {
-  margin-left: 16px;
-  margin-bottom: 16px;
-}
-
-ion-menu.ios ion-content {
-  --padding-bottom: 20px;
-}
-ion-menu.ios ion-list {
-  padding: 20px 0 0 0;
-}
-ion-menu.ios ion-note {
-  line-height: 24px;
-  margin-bottom: 20px;
-}
-
-ion-menu.ios ion-note {
-  padding-left: 16px;
-  padding-right: 16px;
-}
-ion-menu.ios ion-note {
-  margin-bottom: 8px;
-}
-ion-note {
-  display: inline-block;
-  font-size: 16px;
-  color: var(--ion-color-medium-shade);
-}
-ion-content{
+.main-content {
   overflow: auto;
+  height: 100%;
 }
 
-div
-  {
-  overflow:auto;
-  }
+.app-bar {
+  position: absolute;
+}
+
+.create-fab {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+}
 </style>

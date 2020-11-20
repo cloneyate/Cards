@@ -12,6 +12,11 @@ const routes = [
     component: () => import ('@/views/Dashboard.vue')
   },
   {
+    path: '/dashboard2',
+    name: "dashboard2",
+    component: () => import ('@/views/Dashboard2.vue')
+  },
+  {
     path: '/settings',
     name: "settings",
     component: () => import ('@/views/Settings.vue')
@@ -19,7 +24,8 @@ const routes = [
   {
     path: '/create',
     name: "create",
-    component: () => import ('@/views/create.vue')
+    component: () => import ('@/views/create.vue'),
+    props:{preData:{}},
   }
 ]
 

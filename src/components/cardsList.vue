@@ -1,7 +1,7 @@
 <template>
   
     <div class="grid-item" v-for="cardData in cardsListData" :key="cardData">
-      <my-card v-bind="cardData"></my-card>
+      <my-card v-bind:cardData="cardData"></my-card>
     </div>
 
 </template>
