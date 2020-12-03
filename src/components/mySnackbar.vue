@@ -37,7 +37,7 @@ export default {
         })        
 
         const open=()=>{
-          snackbar.open()
+          snackbar.open();
         }
         return {
           snackbarRef,

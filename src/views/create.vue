@@ -124,7 +124,7 @@ import EditorJS from "@editorjs/editorjs";
 import Header from "@editorjs/header";
 import Image from "@editorjs/image";
 import Link from "@editorjs/link";
-import { onMounted, ref } from "vue";
+import { onMounted, ref,inject } from "vue";
 import { MDCTopAppBar } from "@material/top-app-bar";
 import { MDCDialog } from "@material/dialog";
 import router from "@/router";
@@ -182,7 +182,7 @@ export default {
       },
       data: predata,
     });
-
+    const openSnackbar = inject("openSnackbar");
     function saveCard() {
       editor
         .save()
@@ -198,7 +198,10 @@ export default {
               "Content-Type": "application/json",
             },
             body: JSON.stringify(outputData),
-          }).then(() => router.push("dashboard"));
+          }).then(() => {
+            router.push("dashboard");
+            openSnackbar("Created Successfully")
+          });
         })
         .catch((error) => {
           console.log("Saving failed: ", error);
