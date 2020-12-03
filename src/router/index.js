@@ -25,7 +25,7 @@ const routes = [
     path: '/create',
     name: "create",
     component: () => import ('@/views/create.vue'),
-    props:{preData:{}},
+    props:true,
   }
 ]
 

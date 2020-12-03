@@ -22,7 +22,7 @@
           >
           <span class="mdc-list-item__text">Dashboard</span>
         </router-link>
-        
+
         <router-link class="mdc-list-item" to="settings">
           <span class="mdc-list-item__ripple"></span>
           <i class="material-icons mdc-list-item__graphic" aria-hidden="true"
@@ -73,7 +73,7 @@
     <div class="mdc-top-app-bar--fixed-adjust">
       <cards-list v-bind:cards-list-data="data['cardsListData']"></cards-list>
     </div>
-    <router-link  :to="{ name: 'create'}">
+    <router-link :to="{ name: 'create' }">
       <button class="create-fab mdc-fab mdc-fab--extended">
         <div class="mdc-fab__ripple"></div>
         <span class="material-icons mdc-fab__icon">add</span>
@@ -89,10 +89,9 @@
 import { appsSharp, settingsSharp, add } from "ionicons/icons";
 import { useDashboard } from "@/composables/useDashboard";
 import cardsList from "@/components/cardsList.vue";
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, provide, reactive, ref } from "vue";
 import { MDCTopAppBar } from "@material/top-app-bar";
 import { MDCDrawer } from "@material/drawer";
-
 
 export default {
   name: "dashboard",
@@ -107,26 +106,30 @@ export default {
     });
 
     const refresh = () => {
-      const url = "http://127.0.0.1:5000/cards";
+      const url = "http://127.0.0.1:5000/api/cards";
       fetch(url, {
         method: "GET",
         mode: "cors",
       })
         .then((response) => response.json())
         .then((myJson) => {
-          data["cardsListData"] = myJson["cardsListData"];
+          data["cardsListData"] = myJson;
+          console.log("Refreshed")
         });
     };
-
-    refresh();
-
+    provide("refresh", refresh);
+    
+    
     const drawerRef = ref(null);
     let drawer = null;
     const topAppBarRef = ref(null);
     let topAppBar = null;
     const mainContentRef = ref(null);
 
+    
+
     onMounted(() => {
+      refresh();
       topAppBar = MDCTopAppBar.attachTo(topAppBarRef.value);
       drawer = MDCDrawer.attachTo(drawerRef.value);
       topAppBar.setScrollTarget(mainContentRef.value);
@@ -136,7 +139,7 @@ export default {
       });
       drawerRef.value.addEventListener("click", (event) => {
         drawer.open = false;
-        console.log(event);
+        return event
       });
       /*document.body.addEventListener("MDCDrawer:closed", () => {
         mainContentRef.value.querySelector("input, button").focus();
@@ -149,7 +152,6 @@ export default {
       add,
       refresh,
       data,
-
       drawerRef,
       drawer,
       topAppBarRef,
