@@ -106,7 +106,7 @@ export default {
     });
 
     const refresh = () => {
-      const url = "http://127.0.0.1:5000/api/cards";
+      const url = "http://"+window.location.hostname+":5000/api/cards/";
       fetch(url, {
         method: "GET",
         mode: "cors",

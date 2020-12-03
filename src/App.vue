@@ -10,7 +10,7 @@
   </ion-app>
 </template>
 
-<script lang="ts">
+<script>
 import {
   IonApp,
   //IonRouterOutlet

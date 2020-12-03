@@ -137,7 +137,7 @@ export default {
     cid: String,
   },
   setup() {
-    const BASEURL = "http://localhost:5000/";
+    const BASEURL = "http://"+window.location.hostname+":5000/";
     const cover_url = ref("");
     const title = ref("");
 
