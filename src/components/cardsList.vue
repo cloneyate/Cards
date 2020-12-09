@@ -1,8 +1,9 @@
 <template>
-  
-    <div class="grid-item" v-for="cardData in cardsListData" :key="cardData">
+  <div id="list">
+    <div class="item" v-for="cardData in cardsListData" :key="cardData">
       <my-card v-bind:cardData="cardData"></my-card>
     </div>
+  </div>
 
 </template>
 
@@ -21,12 +22,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.masonry {
-  columns: 2;
-  column-gap: 0px;
+
+#list{
+  display: flex;
+  flex-flow:row wrap;
+  justify-content:space-between;
 }
-.grid-item {
-  break-inside: avoid;
-  padding:8px;
+
+.item{
+  margin:16px;
 }
+
+
 </style>

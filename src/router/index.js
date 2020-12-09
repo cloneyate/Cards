@@ -1,4 +1,5 @@
-import { createRouter, createWebHistory } from '@ionic/vue-router';
+import { createRouter, createWebHistory } from 'vue-router';
+
 
 
 const routes = [
@@ -12,9 +13,9 @@ const routes = [
     component: () => import ('@/views/Dashboard.vue')
   },
   {
-    path: '/dashboard2',
-    name: "dashboard2",
-    component: () => import ('@/views/Dashboard2.vue')
+    path: '/login',
+    name: "login",
+    component: () => import ('@/views/login.vue')
   },
   {
     path: '/settings',
@@ -26,7 +27,7 @@ const routes = [
     name: "create",
     component: () => import ('@/views/create.vue'),
     props:true,
-  }
+  },
 ]
 
 
@@ -34,5 +35,11 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
 })
+
+router.beforeEach((to)=>{
+  const isAuthenticated=localStorage.getItem('token') ? true:false;
+  if (to.name !== 'login' && !isAuthenticated) return {name:'login'}
+})
+
 
 export default router

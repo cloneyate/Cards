@@ -10,17 +10,17 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@capacitor/android": "^2.4.2",
     "@capacitor/core": "2.4.2",
     "@editorjs/editorjs": "^2.19.0",
     "@editorjs/header": "^2.6.0",
-    "@ionic/pwa-elements": "^3.0.1",
-    "@ionic/vue": "^5.4.0",
-    "@ionic/vue-router": "^5.4.0",
+    "@ionic-native/barcode-scanner": "^5.30.0",
+    "@ionic-native/core": "^5.30.0",
     "core-js": "^3.6.5",
     "material-components-web": "^8.0.0",
+    "phonegap-plugin-barcodescanner": "^8.1.0",
     "vue": "^3.0.0-0",
-    "vue-router": "^4.0.0-0",
-    "vuetify": "^2.3.17"
+    "vue-router": "^4.0.0-0"
   },
   "devDependencies": {
     "@capacitor/cli": "2.4.2",

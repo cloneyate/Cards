@@ -1,3 +1,16 @@
 <template>
-  <h1>没东西</h1>
+      <my-editor></my-editor>
 </template>
+<script>
+import myEditor from '@/components/myEditor.vue'
+export default {
+  components:{
+    myEditor
+    },
+    setup(){
+      
+        
+    }
+
+}
+</script>

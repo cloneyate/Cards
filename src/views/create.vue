@@ -18,7 +18,7 @@
         role="toolbar"
       >
         <button
-          @click="openSaveDialog()"
+          @click="saveDialogRef.open"
           class="material-icons mdc-top-app-bar__action-item mdc-icon-button"
           aria-label="Save"
         >
@@ -37,11 +37,7 @@
             <button
               class="mdc-button mdc-button--raised custom-raised-button"
               style="position: absolute; left: 15px; bottom: 15px"
-              @click="
-                () => {
-                  return add_cover_btn.click();
-                }
-              "
+              @click="add_cover_btn.click()"
             >
               <div class="mdc-button__ripple"></div>
               <i class="material-icons mdc-button__icon" aria-hidden="true"
@@ -55,11 +51,7 @@
           v-else
           class="mdc-button mdc-button--raised custom-raised-button"
           style="margin: 8px"
-          @click="
-            () => {
-              return add_cover_btn.click();
-            }
-          "
+          @click="add_cover_btn.click()"
         >
           <div class="mdc-button__ripple"></div>
           <i class="material-icons mdc-button__icon" aria-hidden="true">add</i>
@@ -84,39 +76,8 @@
     </div>
   </main>
 
-  <div class="mdc-dialog" ref="saveDialogRef">
-    <div class="mdc-dialog__container">
-      <div
-        class="mdc-dialog__surface"
-        role="alertdialog"
-        aria-modal="true"
-        aria-labelledby="my-dialog-title"
-        aria-describedby="my-dialog-content"
-      >
-        <div class="mdc-dialog__title" id="my-dialog-title">Save Card?</div>
-        <div class="mdc-dialog__actions">
-          <button
-            type="button"
-            class="mdc-button mdc-dialog__button"
-            data-mdc-dialog-action="cancel"
-          >
-            <div class="mdc-button__ripple"></div>
-            <span class="mdc-button__label">Cancel</span>
-          </button>
-          <button
-            type="button"
-            class="mdc-button mdc-dialog__button"
-            data-mdc-dialog-action="discard"
-            @click="saveCard()"
-          >
-            <div class="mdc-button__ripple"></div>
-            <span class="mdc-button__label">Save</span>
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="mdc-dialog__scrim"></div>
-  </div>
+  <my-dialog title="Save?" ref="saveDialogRef" @confirm-click="saveCard">
+  </my-dialog>
 </template>
 
 <script>
@@ -124,30 +85,27 @@ import EditorJS from "@editorjs/editorjs";
 import Header from "@editorjs/header";
 import Image from "@editorjs/image";
 import Link from "@editorjs/link";
-import { onMounted, ref,inject } from "vue";
+import { onMounted, ref, inject } from "vue";
 import { MDCTopAppBar } from "@material/top-app-bar";
-import { MDCDialog } from "@material/dialog";
 import router from "@/router";
-//import {getCard} from "@/composables/card";
+import { createCard } from "@/composables/endpoint";
+import myDialog from "@/components/myDialog.vue";
 
 export default {
   name: "create",
-  components: {},
+  components: { myDialog },
   props: {
     cid: String,
   },
   setup() {
-    const BASEURL = "http://"+window.location.hostname+":5000/";
+    const BASEURL = "https://api.callet.tk/";
     const cover_url = ref("");
     const title = ref("");
-
     const topAppBarRef = ref(null);
-    let topAppBar = null;
+    let topAppBarMdc = null;
     const mainContentRef = ref(null);
-    const saveDialogRef = ref(null);
-    let saveDialog = null;
     const add_cover_btn = ref(null);
-
+    const saveDialogRef = ref(null);
     var predata = {};
 
     function add_cover() {
@@ -168,15 +126,15 @@ export default {
           class: Image,
           config: {
             endpoints: {
-              byFile: BASEURL + "uploadFile/",
-              byUrl: BASEURL + "fetchUrl/",
+              byFile: BASEURL + "uploadFile",
+              byUrl: BASEURL + "fetchUrl",
             },
           },
         },
         link: {
           class: Link,
           config: {
-            endpoint: BASEURL + "fetchUrl/",
+            endpoint: BASEURL + "fetchUrl",
           },
         },
       },
@@ -186,21 +144,14 @@ export default {
     function saveCard() {
       editor
         .save()
-        .then((outputData) => {
-          outputData["cover_url"] = cover_url.value;
-          outputData["title"] = title.value;
-          //console.log(outputData);
-          const url = BASEURL + "/api/cards/";
-          fetch(url, {
-            method: "POST",
-            mode: "cors",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(outputData),
-          }).then(() => {
-            router.push("dashboard");
-            openSnackbar("Created Successfully")
+        .then((editorData) => {
+          editorData["cover_url"] = cover_url.value;
+          editorData["title"] = title.value;
+          createCard(editorData).then((output) => {
+            if (output["success"] == 1) {
+              router.push("dashboard");
+              openSnackbar("Created Successfully");
+            } else openSnackbar(output["error"]);
           });
         })
         .catch((error) => {
@@ -209,35 +160,29 @@ export default {
     }
 
     onMounted(() => {
-      topAppBar = MDCTopAppBar.attachTo(topAppBarRef.value);
-      topAppBar.setScrollTarget(mainContentRef.value);
-      saveDialog = new MDCDialog(saveDialogRef.value);
+      topAppBarMdc = MDCTopAppBar.attachTo(topAppBarRef.value);
+      topAppBarMdc.setScrollTarget(mainContentRef.value);
     });
 
-    function openSaveDialog() {
-      saveDialog.open();
-    }
     return {
       BASEURL,
       editor,
       saveCard,
       close,
       topAppBarRef,
-      topAppBar,
+      topAppBarMdc,
       mainContentRef,
-      saveDialogRef,
-      saveDialog,
-      openSaveDialog,
       cover_url,
       add_cover_btn,
       add_cover,
       title,
       predata,
+      saveDialogRef,
     };
   },
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 @use "@material/icon-button";
 @use "@material/top-app-bar/mdc-top-app-bar";
 @use "@material/dialog";
