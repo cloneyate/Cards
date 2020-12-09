@@ -207,9 +207,6 @@ export default {
         drawer.open = false;
         return event;
       });
-      /*document.body.addEventListener("MDCDrawer:closed", () => {
-        mainContentRef.value.querySelector("input, button").focus();
-      });*/
     });
     return {
       refresh,

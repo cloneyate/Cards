@@ -11,7 +11,7 @@
             arrow_back
           </button>
         </router-link>
-        <span class="mdc-top-app-bar__title">Editor</span>
+        <span class="mdc-top-app-bar__title">Create</span>
       </section>
       <section
         class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end"
@@ -72,7 +72,7 @@
           placeholder="Title"
         />
       </div>
-      <div id="editorjs"></div>
+      
     </div>
   </main>
 
@@ -81,14 +81,10 @@
 </template>
 
 <script>
-import EditorJS from "@editorjs/editorjs";
-import Header from "@editorjs/header";
-import Image from "@editorjs/image";
-import Link from "@editorjs/link";
 import { onMounted, ref, inject } from "vue";
 import { MDCTopAppBar } from "@material/top-app-bar";
 import router from "@/router";
-import { createCard } from "@/composables/endpoint";
+//import { createCard } from "@/composables/endpoint";
 import myDialog from "@/components/myDialog.vue";
 
 export default {
@@ -118,45 +114,10 @@ export default {
       };
     }
 
-    const editor = new EditorJS({
-      holder: "editorjs",
-      tools: {
-        header: Header,
-        image: {
-          class: Image,
-          config: {
-            endpoints: {
-              byFile: BASEURL + "uploadFile",
-              byUrl: BASEURL + "fetchUrl",
-            },
-          },
-        },
-        link: {
-          class: Link,
-          config: {
-            endpoint: BASEURL + "fetchUrl",
-          },
-        },
-      },
-      data: predata,
-    });
     const openSnackbar = inject("openSnackbar");
     function saveCard() {
-      editor
-        .save()
-        .then((editorData) => {
-          editorData["cover_url"] = cover_url.value;
-          editorData["title"] = title.value;
-          createCard(editorData).then((output) => {
-            if (output["success"] == 1) {
-              router.push("dashboard");
-              openSnackbar("Created Successfully");
-            } else openSnackbar(output["error"]);
-          });
-        })
-        .catch((error) => {
-          console.log("Saving failed: ", error);
-        });
+      router.push('dashboard')
+      openSnackbar("Successfully created")
     }
 
     onMounted(() => {
@@ -166,7 +127,6 @@ export default {
 
     return {
       BASEURL,
-      editor,
       saveCard,
       close,
       topAppBarRef,
