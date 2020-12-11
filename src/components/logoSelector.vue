@@ -15,17 +15,12 @@
     <ul class="mdc-image-list my-image-list">
       <li
         class="mdc-image-list__item"
-        v-for="(svg,index) in searchSvg"
+        v-for="(svg_name,index) in searchSvg"
         :key="index"
-        @click="chooseSvg(svg)"
-        :class="{selected:svg==selectedSvg}"
+        @click="chooseSvg(svg_name)"
+        :class="{selected:svg_name==selectedSvg}"
       >
-        <img
-          class="mdc-image-list__image"
-          :src="'assets/svg/'+svg"
-          role="img"
-          :title="svg"
-        >
+        <svg-icon :name="svg_name"></svg-icon>
       </li>
     </ul>
   </div>
@@ -37,7 +32,9 @@
 <script>
 import { computed, ref } from 'vue'
 import svgList from '../composables/svgList'
+import SvgIcon from './SvgIcon.vue'
 export default {
+  components: { SvgIcon },
   name: 'logo-selector',
   setup () {
     svgList
@@ -47,14 +44,14 @@ export default {
       let output = []
       for (let i in svgList) {
         if (svgList[i].search(name.value) != -1) {
-          output.push(svgList[i])
+          output.push(svgList[i].substring(0, svgList[i].indexOf('.')))
         }
       }
       return output
     })
 
-    const chooseSvg = (svg) => {
-      selectedSvg.value = svg
+    const chooseSvg = (svg_name) => {
+      selectedSvg.value = svg_name
     }
     return {
       name,
