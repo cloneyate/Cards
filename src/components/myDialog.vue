@@ -1,5 +1,8 @@
 <template>
-    <div class="mdc-dialog" ref="dialogRef">
+  <div
+    class="mdc-dialog"
+    ref="dialogRef"
+  >
     <div class="mdc-dialog__container">
       <div
         class="mdc-dialog__surface"
@@ -8,9 +11,12 @@
         aria-labelledby="my-dialog-title"
         aria-describedby="my-dialog-content"
       >
-        <div class="mdc-dialog__title" id="my-dialog-title">{{title}}</div>
+        <div
+          class="mdc-dialog__title"
+          id="my-dialog-title"
+        >{{title}}</div>
         <div class="mdc-dialog__content">
-          <slot name="content"></slot>
+          <slot></slot>
         </div>
         <div class="mdc-dialog__actions">
           <button
@@ -40,26 +46,26 @@
 <script>
 import { onMounted, ref } from 'vue'
 import { MDCDialog } from "@material/dialog";
-const dialogRef=ref(null)
-let dialogMdc=null
+const dialogRef = ref(null)
+let dialogMdc = null
 export default {
-    name:"my-dialog",
-    props:{
-        title:String,
-    },
-    setup(){
-        onMounted(()=>{
-            dialogMdc=new MDCDialog(dialogRef.value);
-        });
-        const open=()=>{
-            dialogMdc.open()
-        }
-    return{
-        dialogRef,
-        dialogMdc,
-        open
+  name: "my-dialog",
+  props: {
+    title: String,
+  },
+  setup () {
+    onMounted(() => {
+      dialogMdc = new MDCDialog(dialogRef.value);
+    });
+    const open = () => {
+      dialogMdc.open()
     }
+    return {
+      dialogRef,
+      dialogMdc,
+      open
     }
+  }
 }
 </script>
 <style lang="scss">
@@ -69,5 +75,4 @@ export default {
 @include button.core-styles;
 @include dialog.core-styles;
 @include icon-button.core-styles;
-
 </style>

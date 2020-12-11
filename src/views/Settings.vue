@@ -1,16 +1,15 @@
 <template>
-      <my-editor></my-editor>
+  None
 </template>
 <script>
-import myEditor from '@/components/myEditor.vue'
 export default {
-  components:{
-    myEditor
-    },
-    setup(){
-      
-        
-    }
+  components: {
+
+  },
+  setup () {
+
+
+  }
 
 }
 </script>
