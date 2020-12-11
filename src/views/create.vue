@@ -117,7 +117,6 @@ import myDialog from "@/components/myDialog.vue";
 import logoSelector from "@/components/logoSelector.vue";
 import Quill from 'quill'
 import 'quill/dist/quill.snow.css'
-import "super-tiny-icons/images/svg/github.svg";
 
 export default {
   name: "create",

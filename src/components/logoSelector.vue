@@ -11,6 +11,7 @@
     <span class="mdc-line-ripple"></span>
 
   </label>
+  <svg-icon name="apple"></svg-icon>
   <div style="height:400px;overflow:auto">
     <ul class="mdc-image-list my-image-list">
       <li
@@ -72,8 +73,8 @@ export default {
 @include textfield.core-styles;
 
 .mdc-image-list__item {
-  width: 52px;
-  height: 52px;
+  width: 56px;
+  height: 56px;
   border: 4px solid rgba(255, 255, 255, 0);
 }
 
