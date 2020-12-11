@@ -44,22 +44,23 @@
 </template>
 
 <script>
-import { onMounted, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { MDCDialog } from "@material/dialog";
-const dialogRef = ref(null)
-let dialogMdc = null
+
 export default {
   name: "my-dialog",
   props: {
-    title: String,
+    title: String
   },
   setup () {
-    onMounted(() => {
-      dialogMdc = new MDCDialog(dialogRef.value);
-    });
+    const dialogRef = ref(null)
+    const dialogMdc = computed(() => {
+      return new MDCDialog(dialogRef.value)
+    })
     const open = () => {
-      dialogMdc.open()
+      dialogMdc.value.open()
     }
+
     return {
       dialogRef,
       dialogMdc,
@@ -68,7 +69,7 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 @use "@material/dialog";
 @use "@material/button";
 @use "@material/icon-button";

@@ -12,8 +12,14 @@
 </template>
 
 <script>
+function importAll (r) {
+  r.keys().forEach(r);
+}
+
+importAll(require.context('@/assets/icons/svg', false, /\.svg$/));
+
 export default {
-  name: 'svg-icon',
+  name: 'svg-logo',
 
   props: {
     name: {
@@ -29,7 +35,7 @@ export default {
 
   computed: {
     iconName () {
-      return `#${this.name}`;
+      return "#" + this.name;
     },
 
     className () {

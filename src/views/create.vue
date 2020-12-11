@@ -17,7 +17,7 @@
         role="toolbar"
       >
         <button
-          @click="saveDialogRef.open"
+          @click="saveDialogRef.open()"
           class="material-icons mdc-top-app-bar__action-item mdc-icon-button"
           aria-label="Save"
         >
@@ -90,7 +90,6 @@
       </div>
     </div>
   </main>
-
   <my-dialog
     title="Save?"
     ref="saveDialogRef"
@@ -117,6 +116,7 @@ import myDialog from "@/components/myDialog.vue";
 import logoSelector from "@/components/logoSelector.vue";
 import Quill from 'quill'
 import 'quill/dist/quill.snow.css'
+
 
 export default {
   name: "create",
@@ -150,7 +150,9 @@ export default {
             ['logo']
           ],
           handlers: {
-            logo: () => { logoDialogRef.value.open() }
+            logo: () => {
+              logoDialogRef.value.open()
+            }
           }
         }
       },
@@ -197,8 +199,9 @@ export default {
       add_cover,
       title,
       saveDialogRef,
-      editor,
       logoDialogRef,
+      editor,
+
       logoDialogConfirm,
       logoSelectorRef
     };

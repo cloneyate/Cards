@@ -9,10 +9,8 @@
       aria-labelledby="my-label-id"
     >
     <span class="mdc-line-ripple"></span>
-
   </label>
-  <svg-icon name="apple"></svg-icon>
-  <div style="height:400px;overflow:auto">
+  <div>
     <ul class="mdc-image-list my-image-list">
       <li
         class="mdc-image-list__item"
@@ -21,7 +19,7 @@
         @click="chooseSvg(svg_name)"
         :class="{selected:svg_name==selectedSvg}"
       >
-        <svg-icon :name="svg_name"></svg-icon>
+        <svg-logo :name="svg_name"></svg-logo>
       </li>
     </ul>
   </div>
@@ -33,9 +31,9 @@
 <script>
 import { computed, ref } from 'vue'
 import svgList from '../composables/svgList'
-import SvgIcon from './SvgIcon.vue'
+import svgLogo from './svgLogo.vue'
 export default {
-  components: { SvgIcon },
+  components: { svgLogo },
   name: 'logo-selector',
   setup () {
     svgList
@@ -69,7 +67,6 @@ export default {
 @use "@material/notched-outline/mdc-notched-outline";
 @use "@material/textfield";
 @use "@material/image-list/mdc-image-list";
-
 @include textfield.core-styles;
 
 .mdc-image-list__item {
