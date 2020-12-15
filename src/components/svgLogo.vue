@@ -31,6 +31,7 @@ export default {
       type: String,
       default: null
     }
+
   },
 
   computed: {
@@ -44,11 +45,16 @@ export default {
   }
 };
 </script>
+<style scoped>
+.svg-icon-36px {
+  width: 36px;
+  height: 36px;
+}
 
-<style>
-.svg-icon {
-  fill: currentColor;
-  height: 48px;
+.svg-icon-48px {
   width: 48px;
+  height: 48px;
 }
 </style>
+
+

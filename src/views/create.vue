@@ -17,7 +17,7 @@
         role="toolbar"
       >
         <button
-          @click="saveDialogRef.open()"
+          @click="saveDialogOpen=true"
           class="material-icons mdc-top-app-bar__action-item mdc-icon-button"
           aria-label="Save"
         >
@@ -33,94 +33,75 @@
     ref="mainContentRef"
   >
     <div class="mdc-top-app-bar--fixed-adjust">
-      <div id="page">
-        <template v-if="cover_url">
-          <div id="cover_wrapper">
-            <img
-              id="cover"
-              :src="cover_url"
-              style="margin:0 auto;"
-            />
-            <button
-              class="mdc-button mdc-button--raised custom-raised-button"
-              style="position: absolute; right: 15px; bottom: 15px"
-              @click="add_cover_btn.click()"
-            >
-              <div class="mdc-button__ripple"></div>
-              <i
-                class="material-icons mdc-button__icon"
-                aria-hidden="true"
-              >edit</i>
-              <span class="mdc-button__label">Change cover</span>
-            </button>
-          </div>
-        </template>
+      <div
+        id="cover-wrapper"
+        v-if="cover_url"
+      >
+        <img
+          id="cover"
+          :src="cover_url"
+          style="max-height:300px"
+        />
         <button
-          v-else
           class="mdc-button mdc-button--raised custom-raised-button"
-          style="max-width:160px;"
+          style="position: absolute; right: 15px; bottom: 15px"
           @click="add_cover_btn.click()"
         >
           <div class="mdc-button__ripple"></div>
           <i
             class="material-icons mdc-button__icon"
             aria-hidden="true"
-          >add</i>
-          <span class="mdc-button__label">Add cover</span>
+          >edit</i>
+          <span class="mdc-button__label">Change cover</span>
         </button>
-        <input
-          type="file"
-          @change="add_cover()"
-          accept="image/jpg,image/jpeg,image/png,image/gif"
-          ref="add_cover_btn"
-          style="display: none"
-        />
-        <div style="padding:16px">
-          <input
-            type="text"
-            v-model="title"
-            id="title-input"
-            placeholder="Title"
-          />
-          <div id="toolbar">
-          </div>
-          <div id="editor">
-          </div>
-        </div>
       </div>
+      <button
+        v-else
+        class="mdc-button mdc-button--raised custom-raised-button"
+        style="left:50%;transform:translateX(-50%)"
+        @click="add_cover_btn.click()"
+      >
+        <div class="mdc-button__ripple"></div>
+        <i
+          class="material-icons mdc-button__icon"
+          aria-hidden="true"
+        >add</i>
+        <span class="mdc-button__label">Add cover</span>
+      </button>
+      <input
+        type="file"
+        @change="add_cover()"
+        accept="image/jpg,image/jpeg,image/png,image/gif"
+        ref="add_cover_btn"
+        style="display: none"
+      />
+      <div id="editor-wrapper">
+        <input
+          type="text"
+          v-model="title"
+          id="title-input"
+          placeholder="Title"
+        />
+        <block-editor ref="editorRef"></block-editor>
+      </div>
+
     </div>
   </main>
-  <my-dialog
-    title="Save?"
-    ref="saveDialogRef"
-    @confirm-click="saveCard"
-  >
-  </my-dialog>
-  <my-dialog
-    title="Search logo"
-    ref="logoDialogRef"
-    @confirm-click="logoDialogConfirm"
-  >
-    <template v-slot>
-      <logo-selector ref="logoSelectorRef"></logo-selector>
-    </template>
-  </my-dialog>
 </template>
 
 <script>
 import { onMounted, ref, inject } from "vue";
 import { MDCTopAppBar } from "@material/top-app-bar";
 import router from "@/router";
-//import { createCard } from "@/composables/endpoint";
-import myDialog from "@/components/myDialog.vue";
-import logoSelector from "@/components/logoSelector.vue";
-import Quill from 'quill'
-import 'quill/dist/quill.snow.css'
+import { createCard } from "@/composables/endpoint";
+import BlockEditor from "@/components/BlockEditor.vue";
+
+
 
 
 export default {
   name: "create",
-  components: { myDialog, logoSelector },
+  components: { BlockEditor },
   props: {
     cid: String,
   },
@@ -132,33 +113,8 @@ export default {
     let topAppBarMdc = null;
     const mainContentRef = ref(null);
     const add_cover_btn = ref(null);
-    const saveDialogRef = ref(null);
-    const logoDialogRef = ref(null);
-    const logoSelectorRef = ref(null);
-    let editor = null;
-    var quill_options = {
-      debug: "error",
-      modules: {
-        toolbar: {
-          container: [
-            ['bold', 'italic', 'underline', 'strike'],
-            [{ 'header': [1, 2, 3, false] }],
-            [{ 'color': [] }, { 'background': [] }],
-            ['link', 'image'],
-            [{ 'indent': '-1' }, { 'indent': '+1' }],
-            ['clean'],
-            ['logo']
-          ],
-          handlers: {
-            logo: () => {
-              logoDialogRef.value.open()
-            }
-          }
-        }
-      },
-      placeholder: "Let's start here",
-      theme: 'snow'
-    }
+    const editorRef = ref(null);
+    const saveDialogOpen = ref(false)
     function add_cover () {
       const files = add_cover_btn.value.files;
 
@@ -171,22 +127,30 @@ export default {
 
     const openSnackbar = inject("openSnackbar");
     function saveCard () {
-      router.push('dashboard')
-      openSnackbar("Successfully created")
-    }
-
-    function logoDialogConfirm () {
-      alert(logoSelectorRef.value.selectedSvg)
+      let time = new Date().getTime();
+      let json = {
+        title: title.value,
+        cover_url: cover_url.value,
+        time,
+        blocks: editorRef.value.getBlocks()
+      }
+      createCard(json).then((output) => {
+        if (output["success"] == 1) {
+          router.push('dashboard')
+          openSnackbar("Successfully created")
+        }
+        else {
+          openSnackbar('Something went wrong`(*>﹏<*)′')
+        }
+      })
+      console.log(json)
     }
 
     onMounted(() => {
       topAppBarMdc = MDCTopAppBar.attachTo(topAppBarRef.value);
       topAppBarMdc.setScrollTarget(mainContentRef.value);
-      editor = new Quill('#editor', quill_options);
-      let logoButton = document.querySelector('.ql-logo')
-      //logoButton.classList.add('material-icons', 'mdc-icon-button')
-      logoButton.textContent = "Logo"
     });
+
 
     return {
       BASEURL,
@@ -198,46 +162,37 @@ export default {
       add_cover_btn,
       add_cover,
       title,
-      saveDialogRef,
-      logoDialogRef,
-      editor,
-
-      logoDialogConfirm,
-      logoSelectorRef
+      editorRef,
+      saveDialogOpen
     };
   },
 };
 </script>
 <style lang="scss">
-@use "@material/icon-button";
-@use "@material/top-app-bar/mdc-top-app-bar";
-@use "@material/dialog";
 @use "@material/button";
-
-@include button.core-styles;
-@include dialog.core-styles;
-
-@include icon-button.core-styles;
-
-#page {
-  display: flex;
-  max-width: 1200px;
-  flex-direction: column;
-  justify-content: center;
-  justify-items: center;
-}
 
 #title-input {
   outline: 0;
   border-width: 0;
   font-weight: 100;
   font-size: xx-large;
+  box-sizing: border-box;
+  width: 95%;
+  padding-left: 48px;
 }
 
-#cover_wrapper {
-  max-height: 300px;
-  overflow: hidden;
+#cover-wrapper {
+  display: flex;
+  justify-content: center;
   position: relative;
+}
+
+#editor-wrapper {
+  width: calc(100vw);
+  padding-right: 8px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
 .custom-text-button,
@@ -248,5 +203,9 @@ export default {
 .custom-raised-button {
   --mdc-theme-primary: #bbb6b5;
   --mdc-theme-on-primary: #ffffff;
+}
+
+.logo-container {
+  display: flex;
 }
 </style>

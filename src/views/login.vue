@@ -2,7 +2,10 @@
   <main>
     <div id="wrapper">
       <label id="logo">Login</label>
-      <label class="mdc-text-field mdc-text-field--outlined" ref="usernameRef">
+      <label
+        class="mdc-text-field mdc-text-field--outlined"
+        ref="usernameRef"
+      >
         <span class="mdc-notched-outline">
           <span class="mdc-notched-outline__leading"></span>
           <span class="mdc-notched-outline__notch">
@@ -10,11 +13,18 @@
           </span>
           <span class="mdc-notched-outline__trailing"></span>
         </span>
-        <input v-model="username" type="text" class="mdc-text-field__input"/>
+        <input
+          v-model="username"
+          type="text"
+          class="mdc-text-field__input"
+        />
       </label>
       <label v-if="errors.length">{{errors[0]}}</label>
 
-      <label class="mdc-text-field mdc-text-field--outlined" ref="passwordRef">
+      <label
+        class="mdc-text-field mdc-text-field--outlined"
+        ref="passwordRef"
+      >
         <span class="mdc-notched-outline">
           <span class="mdc-notched-outline__leading"></span>
           <span class="mdc-notched-outline__notch">
@@ -30,12 +40,18 @@
       </label>
       <label v-if="errors.length">{{errors[1]}}</label>
 
-      <button class="mdc-button mdc-button--raised" @click="loginClick()">
+      <button
+        class="mdc-button mdc-button--raised"
+        @click="loginClick()"
+      >
         <div class="mdc-button__ripple"></div>
         <span class="mdc-button__label">Login</span>
       </button>
 
-      <button class="mdc-button mdc-button--raised" @click="registerClick()">
+      <button
+        class="mdc-button mdc-button--raised"
+        @click="registerClick()"
+      >
         <div class="mdc-button__ripple"></div>
         <span class="mdc-button__label">Register</span>
       </button>
@@ -48,48 +64,48 @@ import { inject, onMounted, reactive, ref } from "vue";
 import { MDCTextField } from "@material/textfield";
 import router from "@/router";
 //import postUser from "@/composables/user.js"
-import {auth,registerUser} from "@/composables/endpoint.js"
+import { auth, registerUser } from "@/composables/endpoint.js"
 
 export default {
-  setup() {
+  setup () {
     const username = ref("");
     const password = ref("");
     const usernameRef = ref(null);
     let usernameMdc = null;
     const passwordRef = ref(null);
     let passwordMdc = null;
-    const errors=reactive(["",""])
+    const errors = reactive(["", ""])
 
     const openSnackbar = inject("openSnackbar");
 
-    function checkInput(){
-      username.value ? username.value.trim().length<4 ? errors[0]='Please input a longer username':errors[0]='':errors[0]='Please input username'
-      password.value ? password.value.trim().length<8 ? errors[1]='Please input a longer password':errors[1]='':errors[1]='Please input password'
-      if (!errors[0]&&!errors[1]) return true
+    function checkInput () {
+      username.value ? username.value.trim().length < 4 ? errors[0] = 'Please input a longer username' : errors[0] = '' : errors[0] = 'Please input username'
+      password.value ? password.value.trim().length < 8 ? errors[1] = 'Please input a longer password' : errors[1] = '' : errors[1] = 'Please input password'
+      if (!errors[0] && !errors[1]) return true
       else return false
     }
 
-    function loginClick() {
-      if (checkInput()){
-        auth(username.value,password.value).then(output=>{
+    function loginClick () {
+      if (checkInput()) {
+        auth(username.value, password.value).then(output => {
           console.log(output)
-          if (output["success"]){
+          if (output["success"]) {
             for (const key in output) {
-                localStorage.setItem(key, output[key]);
-              }
-              router.push("dashboard");
-            } 
-          else{
+              localStorage.setItem(key, output[key]);
+            }
+            router.push("dashboard");
+          }
+          else {
             openSnackbar(output["error"])
           }
-          
+
         })
-        
+
       }
-      
+
     }
 
-    function registerClick() {
+    function registerClick () {
       const userObj = {
         "username": username.value,
         "password": password.value,
@@ -98,17 +114,17 @@ export default {
         "email": "",
         "cards": [],
       };
-      if (username.value && password.value){
-        registerUser(userObj).then(()=>{
+      if (username.value && password.value) {
+        registerUser(userObj).then(() => {
           openSnackbar("Successfully Register")
         })
-        
+
       }
-      else{
-        username.value ? null:errors[0]='Please input username'
-        password.value ? null:errors[1]='Please input password'
+      else {
+        username.value ? null : errors[0] = 'Please input username'
+        password.value ? null : errors[1] = 'Please input password'
       }
-      
+
 
     }
 
@@ -133,16 +149,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@use "@material/floating-label/mdc-floating-label";
-@use "@material/line-ripple/mdc-line-ripple";
-@use "@material/notched-outline/mdc-notched-outline";
-@use "@material/textfield";
-@use "@material/button";
-
-@include button.core-styles;
-
-@include textfield.core-styles;
-
 main {
   height: 100%;
   width: 100%;

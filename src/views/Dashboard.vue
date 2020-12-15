@@ -1,5 +1,8 @@
 <template>
-  <aside class="mdc-drawer mdc-drawer--modal" ref="drawerRef">
+  <aside
+    class="mdc-drawer mdc-drawer--modal"
+    ref="drawerRef"
+  >
     <div class="mdc-drawer__header">
       <img
         :src="localStorage.getItem('avatar_url')"
@@ -17,25 +20,32 @@
           tabindex="0"
         >
           <span class="mdc-list-item__ripple"></span>
-          <i class="material-icons mdc-list-item__graphic" aria-hidden="true"
-            >dashboard</i
-          >
+          <i
+            class="material-icons mdc-list-item__graphic"
+            aria-hidden="true"
+          >dashboard</i>
           <span class="mdc-list-item__text">Dashboard</span>
         </router-link>
 
-        <router-link class="mdc-list-item" to="settings">
+        <router-link
+          class="mdc-list-item"
+          to="settings"
+        >
           <span class="mdc-list-item__ripple"></span>
-          <i class="material-icons mdc-list-item__graphic" aria-hidden="true"
-            >settings</i
-          >
+          <i
+            class="material-icons mdc-list-item__graphic"
+            aria-hidden="true"
+          >settings</i>
           <span class="mdc-list-item__text">Settings</span>
         </router-link>
 
-        <li class="mdc-list-item mdc-list-item" to="login" @click="logOutClick">
+        <li
+          class="mdc-list-item mdc-list-item"
+          to="login"
+          @click="logOutClick"
+        >
           <span class="mdc-list-item__ripple"></span>
-          <i class="material-icons mdc-list-item__graphic" aria-hidden="true"
-            >login</i
-          >
+          <span class="material-icons mdc-list-item__graphic">exit_to_app</span>
           <span class="mdc-list-item__text">Log out</span>
         </li>
       </nav>
@@ -49,22 +59,14 @@
     ref="topAppBarRef"
   >
     <div class="mdc-top-app-bar__row">
-      <section
-        class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start"
-      >
-        <button
-          class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button"
-        >
+      <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+        <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button">
           menu
         </button>
         <span class="mdc-top-app-bar__title">Cards</span>
       </section>
-      <section
-        class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end"
-      >
-        <button
-          class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button"
-        >
+      <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
+        <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button">
           search
         </button>
         <div class="mdc-menu-surface--anchor">
@@ -74,38 +76,46 @@
           >
             add
           </button>
-        <div ref="menuRef" class="mdc-menu mdc-menu-surface">
-          <ul
-            class="mdc-list"
-            role="menu"
-            aria-hidden="true"
-            aria-orientation="vertical"
-            tabindex="-1"
+          <div
+            ref="menuRef"
+            class="mdc-menu mdc-menu-surface"
           >
-            <li role="menuitem" class="mdc-list-item" @click="scanQr">
-              <span class="mdc-list-item__ripple"></span>
-              <span
-                    class="mdc-list-item__graphic material-icons"
-                    >qr_code_scanner</span
-                  >
-                  <span class="mdc-list-item__text">Import via QR code</span>
-            </li>
-            <li role="menuitem" class="mdc-list-item" @click="importViaClip">
-              <span class="mdc-list-item__ripple"></span>
-              <span
-                    class="mdc-list-item__graphic material-icons"
-                    >content_paste</span
-                  >
-                  <span class="mdc-list-item__text">Import via clipboard</span>
-            </li>
-          </ul>
-        </div>
+            <ul
+              class="mdc-list"
+              role="menu"
+              aria-hidden="true"
+              aria-orientation="vertical"
+              tabindex="-1"
+            >
+              <li
+                role="menuitem"
+                class="mdc-list-item"
+                @click="scanQr"
+              >
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__graphic material-icons">qr_code_scanner</span>
+                <span class="mdc-list-item__text">Import via QR code</span>
+              </li>
+              <li
+                role="menuitem"
+                class="mdc-list-item"
+                @click="importViaClip"
+              >
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__graphic material-icons">content_paste</span>
+                <span class="mdc-list-item__text">Import via clipboard</span>
+              </li>
+            </ul>
+          </div>
         </div>
       </section>
     </div>
   </header>
 
-  <main class="main-content" ref="mainContentRef">
+  <main
+    class="main-content"
+    ref="mainContentRef"
+  >
     <div class="mdc-top-app-bar--fixed-adjust">
       <progress-bar
         v-if="!('cardsListData' in data)"
@@ -115,13 +125,10 @@
         v-else
         v-bind:cards-list-data="data['cardsListData']"
       ></cards-list>
-      <span
-        v-if="
+      <span v-if="
           data.hasOwnProperty('cardsListData') &&
           data['cardsListData'].length == 0
-        "
-        >Empty Cards List</span
-      >
+        ">Empty Cards List</span>
     </div>
     <router-link :to="{ name: 'create' }">
       <button class="create-fab mdc-fab mdc-fab--extended">
@@ -142,7 +149,7 @@ import { MDCMenu } from "@material/menu";
 import { getCardsList } from "@/composables/endpoint";
 import progressBar from "@/components/progressBar";
 import router from "@/router";
-import {getClipboard,scanQr} from "@/composables/useDashboard"
+import { getClipboard, scanQr } from "@/composables/useDashboard"
 export default {
   name: "dashboard",
   components: {
@@ -150,7 +157,7 @@ export default {
     progressBar,
   },
 
-  setup() {
+  setup () {
     const data = reactive({});
 
     const refresh = async () => {
@@ -176,8 +183,8 @@ export default {
     const topAppBarRef = ref(null);
     let topAppBar = null;
     const mainContentRef = ref(null);
-    const menuRef=ref(null);
-    let menuMdc=null;
+    const menuRef = ref(null);
+    let menuMdc = null;
 
     const openMenu = () => {
       try {
@@ -187,9 +194,9 @@ export default {
       }
     };
 
-    const importViaClip=async()=>{
+    const importViaClip = async () => {
       //剪贴板导入逻辑
-      let text=await getClipboard()
+      let text = await getClipboard()
       console.log(text)
     }
 
@@ -198,7 +205,7 @@ export default {
       topAppBar = MDCTopAppBar.attachTo(topAppBarRef.value);
       drawer = MDCDrawer.attachTo(drawerRef.value);
       topAppBar.setScrollTarget(mainContentRef.value);
-      menuMdc= new MDCMenu(menuRef.value);
+      menuMdc = new MDCMenu(menuRef.value);
 
       topAppBar.listen("MDCTopAppBar:nav", () => {
         drawer.open = !drawer.open;
@@ -229,24 +236,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@use "@material/list";
-@use "@material/ripple";
-@use "@material/icon-button";
-@use "@material/button";
-@use "@material/top-app-bar/mdc-top-app-bar";
-@use "@material/drawer";
-@use "@material/list/mdc-list";
-@use "@material/menu-surface/mdc-menu-surface";
-@use "@material/menu/mdc-menu";
-@use "@material/fab";
-@include drawer.core-styles;
-@include drawer.dismissible-core-styles;
-@include drawer.modal-core-styles;
-@include fab.core-styles;
-@include button.core-styles;
-@include icon-button.core-styles;
-@include list.core-styles;
-
 body {
   display: flex;
   height: 100vh;

@@ -1,15 +1,9 @@
 <template>
-  <label class="mdc-text-field mdc-text-field--filled mdc-text-field--no-label">
-    <span class="mdc-text-field__ripple"></span>
-
-    <input
-      class="mdc-text-field__input"
-      type="search"
-      v-model="name"
-      aria-labelledby="my-label-id"
-    >
-    <span class="mdc-line-ripple"></span>
-  </label>
+  <mcw-textfield
+    v-model="name"
+    fullwidth
+  >
+  </mcw-textfield>
   <div>
     <ul class="mdc-image-list my-image-list">
       <li
@@ -19,7 +13,10 @@
         @click="chooseSvg(svg_name)"
         :class="{selected:svg_name==selectedSvg}"
       >
-        <svg-logo :name="svg_name"></svg-logo>
+        <svg-logo
+          :name="svg_name"
+          class="svg-icon-48px"
+        ></svg-logo>
       </li>
     </ul>
   </div>
@@ -31,9 +28,8 @@
 <script>
 import { computed, ref } from 'vue'
 import svgList from '../composables/svgList'
-import svgLogo from './svgLogo.vue'
 export default {
-  components: { svgLogo },
+  components: {},
   name: 'logo-selector',
   setup () {
     svgList
@@ -62,17 +58,14 @@ export default {
 }
 </script>
 <style lang="scss">
-@use "@material/floating-label/mdc-floating-label";
-@use "@material/line-ripple/mdc-line-ripple";
-@use "@material/notched-outline/mdc-notched-outline";
-@use "@material/textfield";
-@use "@material/image-list/mdc-image-list";
-@include textfield.core-styles;
-
 .mdc-image-list__item {
   width: 56px;
   height: 56px;
   border: 4px solid rgba(255, 255, 255, 0);
+}
+.my-image-list {
+  height: 400px;
+  overflow-y: auto;
 }
 
 .selected {

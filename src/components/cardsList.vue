@@ -1,6 +1,10 @@
 <template>
   <div id="list">
-    <div class="item" v-for="cardData in cardsListData" :key="cardData">
+    <div
+      class="item"
+      v-for="cardData in cardsListData"
+      :key="cardData"
+    >
       <my-card v-bind:cardData="cardData"></my-card>
     </div>
   </div>
@@ -22,16 +26,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
-#list{
+#list {
   display: flex;
-  flex-flow:row wrap;
-  justify-content:space-between;
+  flex-flow: row wrap;
+  justify-content: space-between;
 }
 
-.item{
-  margin:16px;
+.item {
+  margin: 16px;
 }
-
-
 </style>
