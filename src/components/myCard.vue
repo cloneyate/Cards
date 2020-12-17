@@ -12,22 +12,11 @@
             v-for="block in cardData.blocks"
             :key="block.id"
           >
-            <p
-              v-text="block.data.text"
-              v-if="block.name==='base-block'"
-            ></p>
-            <img
-              :src="block.data.src"
-              style="max-width:320px"
-              v-else-if="block.name==='image-block'"
-            >
-            <template v-else-if="block.name==='logo-block'">
-              <svg-logo
-                class="svg-icon-36px"
-                :name="block.data.logoName"
-              ></svg-logo>
-              <p v-text="block.data.text"></p>
-            </template>
+            <component
+              :is="block.name"
+              :data="block.data"
+              :read-only="true"
+            ></component>
           </div>
         </div>
         <div
@@ -57,7 +46,10 @@
         </button>
       </div>
       <div class="mdc-card__action-icons">
-        <button class="material-icons mdc-icon-button mdc-card__action mdc-card__action--icon">
+        <button
+          class="material-icons mdc-icon-button mdc-card__action mdc-card__action--icon"
+          @click="shareCardClick(cardData._id)"
+        >
           share
         </button>
         <button
@@ -130,6 +122,7 @@
 import { MDCMenu } from "@material/menu";
 import { ref, onMounted, inject } from "vue";
 import { deleteCard } from "@/composables/endpoint";
+import { shareCard, writeClipboard } from '@/composables/useDashboard'
 
 export default {
   name: "my-card",
@@ -165,6 +158,15 @@ export default {
       });
     };
 
+    const shareCardClick = (cid) => {
+      try {
+        shareCard(cid)
+      } catch (err) { console.log(err) }
+
+      writeClipboard("https://callet.tk/card/" + cid)
+      openSnackbar('Export to clipboard successfully')
+    }
+
 
 
 
@@ -180,6 +182,7 @@ export default {
       icon_name,
       openMenu,
       deleteCardClick,
+      shareCardClick
     };
   },
 };
@@ -226,8 +229,34 @@ export default {
   opacity: 30%;
 }
 
+.hover-button {
+  display: none;
+}
+
+.block-root button {
+  border: 0;
+  padding: 0;
+  background: white;
+}
+
+.hover-button {
+  border: 0;
+  padding: 0;
+  background: white;
+  visibility: hidden;
+  float: left;
+}
+
+.block-root button:focus {
+  outline: none;
+}
+
+.block-root:hover .hover-button {
+  visibility: visible;
+}
+
 .block-container {
-  display: flex;
+  margin-block: 2px;
 }
 </style>
 

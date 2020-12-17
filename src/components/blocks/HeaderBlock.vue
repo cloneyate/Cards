@@ -1,10 +1,10 @@
 <template>
   <div class="block-root">
-    <button
-      class="hover-button"
-      @click="$emit('remove')"
-    ><span class="material-icons">clear</span></button>
-    <button class="hover-button"><span class="material-icons">more_vert</span></button>
+    <block-action
+      :index="index"
+      v-if="!readOnly"
+    >
+    </block-action>
     <div ref="headerRef">
     </div>
   </div>
@@ -12,9 +12,12 @@
 
 <script>
 import { h, render, ref, onMounted } from 'vue'
+import BlockAction from '../BlockAction.vue'
 export default {
+  components: { BlockAction },
   name: "header-block",
   props: {
+    readOnly: { type: Boolean, default: false },
     index: Number,
     data: {
       level: {
@@ -25,13 +28,13 @@ export default {
     }
 
   },
-  setup (props) {
+  setup (props, context) {
     const headerRef = ref(null)
     onMounted(() => {
       render(h('h' + props.data.level, {
-        attrs: {
-          contenteditable: true,
-        }
+        contenteditable: !props.readOnly,
+        style: 'margin-block-start: 0;margin-block-end: 0;min-width:150px;outline:none',
+        onInput: (event) => { context.emit('update:data', { text: event.target.innerText, level: props.data.level }) }
       }, props.data.text), headerRef.value)
     })
     return {
@@ -41,5 +44,5 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 </style>

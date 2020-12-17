@@ -16,6 +16,7 @@
     "@capacitor/core": "2.4.2",
     "@ionic-native/barcode-scanner": "^5.30.0",
     "@ionic-native/core": "^5.30.0",
+    "balm-ui": "^9.4.0",
     "core-js": "^3.6.5",
     "material-components-web": "^8.0.0",
     "material-design-icons": "^3.0.1",

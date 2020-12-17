@@ -8,9 +8,12 @@ import ImageBlock from './components/blocks/ImageBlock.vue'
 import LogoBlock from './components/blocks/LogoBlock.vue'
 import HeaderBlock from './components/blocks/HeaderBlock'
 import VueMaterialAdapter from 'vue-material-adapter'
+import BalmUI from 'balm-ui';
+import 'balm-ui/dist/balm-ui.css';
 
 
 const app = createApp(App)
+  .use(BalmUI)
   .use(VueMaterialAdapter)
   .use(router);
 router.isReady().then(() => {

@@ -1,14 +1,11 @@
 <template>
   <div class="block-root">
-    <button
-      class="hover-button"
-      @click="$emit('remove')"
-    ><span class="material-icons">clear</span></button>
-    <button
-      class="hover-button"
-      @click="logoDialogOpen=true"
-    ><span class="material-icons">more_vert</span></button>
-    <div
+    <block-action
+      :index="index"
+      v-if="!readOnly"
+    >
+    </block-action>
+    <template
       v-if="logoNameRef"
       style="display:flex"
     >
@@ -20,12 +17,12 @@
       ></svg-logo>
       <h4
         placeholder="Type caption"
-        contenteditable="true"
+        :contenteditable="!readOnly"
         v-text="logoCaption"
         class="should-focus logo-caption"
         @input="$emit('update:data',{text:$event.target.value,logoName: logoNameRef})"
       ></h4>
-    </div>
+    </template>
     <div
       v-else
       @click="logoDialogOpen=true"
@@ -55,10 +52,12 @@
 <script>
 import { ref } from 'vue'
 import LogoSelector from '../logoSelector.vue'
+import BlockAction from '../BlockAction.vue'
 export default {
-  components: { LogoSelector },
+  components: { LogoSelector, BlockAction },
   name: 'base-block',
   props: {
+    readOnly: { type: Boolean, default: false },
     index: Number,
     data: {
       text: String,
@@ -88,7 +87,7 @@ export default {
 }
 
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 .material-icons.md-36px {
   font-size: 36px;
 }
@@ -111,6 +110,7 @@ export default {
   padding-top: 6px;
   padding-bottom: 6px;
   height: 36px;
+  flex-grow: 1;
 }
 .logo-caption {
   min-width: 150px;

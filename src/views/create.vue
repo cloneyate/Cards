@@ -17,7 +17,7 @@
         role="toolbar"
       >
         <button
-          @click="saveDialogOpen=true"
+          @click="saveCard"
           class="material-icons mdc-top-app-bar__action-item mdc-icon-button"
           aria-label="Save"
         >

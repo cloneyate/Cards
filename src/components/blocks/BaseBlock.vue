@@ -1,25 +1,30 @@
 <template>
   <div class="block-root">
-    <button
-      class="hover-button"
-      @click="$emit('remove')"
-    ><span class="material-icons">clear</span></button>
-    <button class="hover-button"><span class="material-icons">more_vert</span></button>
-    <div
+    <block-action
+      :index="index"
+      v-if="!readOnly"
+    >
+    </block-action>
+
+    <p
       @input="handleInput"
       @keydown="handleKeydown"
-      class="div-input should-focus"
-      contenteditable="true"
+      class="para-input should-focus"
+      :contenteditable="!readOnly"
       placeholder="Type something"
       v-text="data.text"
-    ></div>
+    ></p>
+
   </div>
 </template>
 <script>
 import { computed } from 'vue'
+import BlockAction from '../BlockAction.vue'
 export default {
+  components: { BlockAction },
   name: 'base-block',
   props: {
+    readOnly: { type: Boolean, default: false },
     index: Number,
     data: {
       text: String
@@ -63,17 +68,11 @@ export default {
 }
 
 </script>
-<style scoped>
-.div-input {
+<style>
+.para-input {
   min-width: 150px;
-  padding-left: 48px;
-}
-.div-input:focus {
-  outline: none;
-}
-
-.div-input:focus:empty::before {
-  content: attr(placeholder);
-  opacity: 30%;
+  margin-top: 0;
+  margin-bottom: 0;
+  outline: 0;
 }
 </style>

@@ -1,5 +1,4 @@
 <template>
-  <editor-toolbar></editor-toolbar>
   <div id="container">
     <transition-group name="flip-list">
       <div
@@ -23,7 +22,6 @@
 
 <script>
 import { onMounted, provide, reactive } from 'vue'
-import EditorToolbar from './EditorToolbar.vue'
 function CamelCase2KebabCase (str) {
   let output = ""
   for (let i in str) {
@@ -37,7 +35,7 @@ function CamelCase2KebabCase (str) {
 
 export default {
   name: 'block-editor',
-  components: { EditorToolbar },
+  components: {},
   directives: {
     focus: {
       mounted: function (el) {
@@ -63,8 +61,7 @@ export default {
   setup () {
     const blocks = reactive([])
     let newId = 1
-    function addBlock (component_name, data = { text: '' }) {
-      let index = blocks.length - 1
+    function insertBlock (component_name, index = 0, data = { text: '' }) {
       try {
         //index = window.getSelection().focusNode.closest('.block-root').getAttribute('index')
         console.log("获取成功", index)
@@ -100,12 +97,30 @@ export default {
       }
     }
 
+    function removeBlock (index) {
+      return blocks.splice(index, 1)
+    }
+    function switchBlock (index_1, index_2) {
+      if (index_1 >= blocks.length || index_2 >= blocks.length)
+        return false
+      else {
+        let temp = blocks[index_1]
+        blocks[index_1] = blocks[index_2]
+        blocks[index_2] = temp
+        return true
+      }
+
+    }
 
     function getBlocks () {
       console.log(blocks)
       return blocks
     }
-    provide('addBlock', addBlock)
+
+    provide('insertBlock', insertBlock)
+    provide('handleInsertBlock', handleInsertBlock)
+    provide('removeBlock', removeBlock)
+    provide('switchBlock', switchBlock)
     onMounted(() => {
       blocks.push({
         name: 'base-block',
@@ -117,7 +132,7 @@ export default {
     })
     return {
       blocks,
-      addBlock,
+      insertBlock,
       getBlocks,
       handleInsertBlock
     }
@@ -136,18 +151,13 @@ export default {
   transition: transform 0.5s;
 }
 
-.block-root button {
-  border: 0;
-  padding: 0;
-  background: white;
-}
-
 .hover-button {
-  border: 0;
   padding: 0;
+  width: 24px;
+  height: 24px;
   background: white;
   visibility: hidden;
-  float: left;
+  flex-shrink: 0;
 }
 
 .block-root button:focus {
@@ -160,5 +170,10 @@ export default {
 
 .block-container {
   margin-block: 2px;
+}
+
+.block-root {
+  display: flex;
+  align-items: flex-start;
 }
 </style>

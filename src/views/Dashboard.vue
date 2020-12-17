@@ -71,7 +71,7 @@
         </button>
         <div class="mdc-menu-surface--anchor">
           <button
-            class="material-icons mdc-icon-button mdc-card__action mdc-card__action--icon"
+            class="material-icons mdc-icon-button mdc-top-app-bar__navigation-icon"
             @click="openMenu"
           >
             add
@@ -146,7 +146,7 @@ import { inject, onMounted, provide, reactive, ref } from "vue";
 import { MDCTopAppBar } from "@material/top-app-bar";
 import { MDCDrawer } from "@material/drawer";
 import { MDCMenu } from "@material/menu";
-import { getCardsList } from "@/composables/endpoint";
+import { getCardsList, collectCard } from "@/composables/endpoint";
 import progressBar from "@/components/progressBar";
 import router from "@/router";
 import { getClipboard, scanQr } from "@/composables/useDashboard"
@@ -197,7 +197,23 @@ export default {
     const importViaClip = async () => {
       //剪贴板导入逻辑
       let text = await getClipboard()
-      console.log(text)
+      let url = new URL(text)
+      let splits = url.pathname.split('/')
+      if (url.hostname === 'callet.tk' && splits[1] === 'card') {
+        let cid = splits[2]
+        if (cid.length == 24) {
+          let output = await collectCard(cid)
+          if (output['success'] === 1) {
+            openSnackbar('Import Successfully')
+            refresh()
+          }
+        }
+
+      }
+      else {
+        openSnackbar("Invalid url")
+      }
+
     }
 
     onMounted(() => {
