@@ -1,11 +1,11 @@
 <template>
   <div id="list">
     <div
-      class="item"
-      v-for="cardData in cardsListData"
+      class="list-complete-item"
+      v-for="cardData in cardsList"
       :key="cardData"
     >
-      <my-card v-bind:cardData="cardData"></my-card>
+      <my-card v-bind="cardData"></my-card>
     </div>
   </div>
 
@@ -15,24 +15,24 @@
 import myCard from "./myCard.vue";
 
 export default {
-  name: "cards-list",
+  name: "cards-grid",
   components: {
-    myCard,
+    myCard
   },
   props: {
-    cardsListData: Array,
+    cardsList: Array,
   },
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 #list {
   display: flex;
   flex-flow: row wrap;
-  justify-content: space-between;
+  justify-content: space-around;
 }
 
-.item {
+.list-complete-item {
   margin: 16px;
 }
 </style>

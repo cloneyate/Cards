@@ -21,53 +21,53 @@
       <span class="material-icons md-36px">insert_photo</span>
       <span style="line-height:36px">Click to add image</span>
     </div>
-    <mcw-dialog v-model="dialogOpen">
-      <mcw-dialog-content>
-        <mcw-layout-grid>
-          <mcw-layout-cell
+    <ui-dialog v-model="dialogOpen">
+      <ui-dialog-content>
+        <ui-grid>
+          <ui-grid-cell
             desktop="6"
             phone="6"
           >
-            <mcw-radio
+            <ui-radio
               :id="'radio'+index"
               :name="'radio'+index"
               v-model="picked"
               label="Embed link"
               value="Embed link"
-            ></mcw-radio>
+            ></ui-radio>
             <input
               placeholder="Paste image link"
               class="should-focus"
               @input="$emit('update:data',{src:$event.target.value})"
               :disabled="picked!='Embed link'"
             >
-          </mcw-layout-cell>
-          <mcw-layout-cell
+          </ui-grid-cell>
+          <ui-grid-cell
             desktop="6"
             phone="6"
           >
-            <mcw-radio
+            <ui-radio
               :id="'radio'+index"
               :name="'radio'+index"
               v-model="picked"
               label="Upload"
               value="Upload"
-            ></mcw-radio>
+            ></ui-radio>
             <input
               type="file"
               :disabled="picked!='Upload'"
             >
-          </mcw-layout-cell>
-        </mcw-layout-grid>
-      </mcw-dialog-content>
-      <mcw-dialog-footer>
-        <mcw-dialog-button
-          action="dismiss"
+          </ui-grid-cell>
+        </ui-grid>
+      </ui-dialog-content>
+      <ui-dialog-actions>
+        <ui-button
+          @click="dialogOpen=false"
           isDefault
-        >Dismiss</mcw-dialog-button>
-        <mcw-dialog-button action="accept">Confirm</mcw-dialog-button>
-      </mcw-dialog-footer>
-    </mcw-dialog>
+        >Dismiss</ui-button>
+        <ui-button @click="dialogOpen=false">Confirm</ui-button>
+      </ui-dialog-actions>
+    </ui-dialog>
   </div>
 </template>
 <script>
@@ -76,6 +76,7 @@ import BlockAction from '../BlockAction.vue'
 export default {
   components: { BlockAction },
   name: 'base-block',
+  emits: ["update:data", "keydown"],
   props: {
     readOnly: { type: Boolean, default: false },
     index: Number,

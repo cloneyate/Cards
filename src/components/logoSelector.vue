@@ -1,9 +1,12 @@
 <template>
-  <mcw-textfield
+  <ui-textfield
     v-model="name"
+    outlined
     fullwidth
-  >
-  </mcw-textfield>
+  ><template #before>
+      <ui-textfield-icon unclickable>search</ui-textfield-icon>
+    </template>
+  </ui-textfield>
   <div>
     <ul class="mdc-image-list my-image-list">
       <li

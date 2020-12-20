@@ -16,6 +16,7 @@ import BlockAction from '../BlockAction.vue'
 export default {
   components: { BlockAction },
   name: "header-block",
+  emits: ["update:data", "keydown"],
   props: {
     readOnly: { type: Boolean, default: false },
     index: Number,
@@ -33,6 +34,7 @@ export default {
     onMounted(() => {
       render(h('h' + props.data.level, {
         contenteditable: !props.readOnly,
+        class: 'should-focus',
         style: 'margin-block-start: 0;margin-block-end: 0;min-width:150px;outline:none',
         onInput: (event) => { context.emit('update:data', { text: event.target.innerText, level: props.data.level }) }
       }, props.data.text), headerRef.value)

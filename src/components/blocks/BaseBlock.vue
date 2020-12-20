@@ -18,7 +18,7 @@
   </div>
 </template>
 <script>
-import { computed } from 'vue'
+import { computed, inject } from 'vue'
 import BlockAction from '../BlockAction.vue'
 export default {
   components: { BlockAction },
@@ -29,9 +29,12 @@ export default {
     data: {
       text: String
     }
-
   },
+  emits: ["update:data", "keydown"],
+
   setup (props, context) {
+    const insertBlock = inject('insertBlock')
+    const removeBlock = inject('removeBlock')
     const selection = computed(() => {
       return window.getSelection()
     })
@@ -39,22 +42,23 @@ export default {
       context.emit('update:data', { text: event.target.innerText })
     }
     const handleKeydown = (event) => {
-      let preSelection = selection.value
-      let anchorOffset = preSelection.anchorOffset
       if (event.key === "Enter") {
+        let preSelection = selection.value
+        let anchorOffset = preSelection.anchorOffset
         event.preventDefault()
         let leftText = event.target.innerText.slice(0, anchorOffset)
+        console.log(leftText)
         let rightText = event.target.innerText.slice(anchorOffset)
         if (rightText.length != 0) {
-          context.emit('insert-block', { split: true, leftText, rightText })
+          context.emit('update:data', { text: leftText })
+          insertBlock('base-block', props.index, { text: rightText })
         } else {
-          context.emit('insert-block', { split: false })
+          insertBlock('base-block', props.index)
         }
-
       }
       else if (event.key === "Backspace" && event.target.innerText === '') {
         event.preventDefault()
-        context.emit('remove')
+        removeBlock(props.index)
       }
       else { null }
     }
@@ -71,8 +75,8 @@ export default {
 <style>
 .para-input {
   min-width: 150px;
-  margin-top: 0;
-  margin-bottom: 0;
+  margin-top: 2px;
+  margin-bottom: auto;
   outline: 0;
 }
 </style>

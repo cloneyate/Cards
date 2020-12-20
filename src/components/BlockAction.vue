@@ -4,7 +4,10 @@
       class="hover-button material-icons mdc-top-app-bar__action-item mdc-icon-button"
       @click="addMenuOpen=true"
     >add</button>
-    <ui-menu v-model="addMenuOpen">
+    <ui-menu
+      v-model="addMenuOpen"
+      position="TOP_END"
+    >
       <ui-menuitem @click="insertBlock('base-block',index,{text:''})">
         <span class="material-icons mdc-list-item__graphic">title</span>
         <ui-menuitem-text>Text</ui-menuitem-text>
@@ -47,7 +50,10 @@
       class="hover-button material-icons mdc-top-app-bar__action-item mdc-icon-button"
       @click="moreMenuOpen=true"
     >more_vert</button>
-    <ui-menu v-model="moreMenuOpen">
+    <ui-menu
+      v-model="moreMenuOpen"
+      position="TOP_END"
+    >
       <ui-menuitem @click="removeBlock(index)">
         <span class="material-icons mdc-list-item__graphic">delete</span>
         <ui-menuitem-text>Delete</ui-menuitem-text>

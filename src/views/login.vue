@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import { inject, onMounted, reactive, ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import { MDCTextField } from "@material/textfield";
 import router from "@/router";
 //import postUser from "@/composables/user.js"
@@ -76,8 +76,6 @@ export default {
     let passwordMdc = null;
     const errors = reactive(["", ""])
 
-    const openSnackbar = inject("openSnackbar");
-
     function checkInput () {
       username.value ? username.value.trim().length < 4 ? errors[0] = 'Please input a longer username' : errors[0] = '' : errors[0] = 'Please input username'
       password.value ? password.value.trim().length < 8 ? errors[1] = 'Please input a longer password' : errors[1] = '' : errors[1] = 'Please input password'
@@ -89,35 +87,23 @@ export default {
       if (checkInput()) {
         auth(username.value, password.value).then(output => {
           console.log(output)
-          if (output["success"]) {
+          if (output["access_token"]) {
             for (const key in output) {
               localStorage.setItem(key, output[key]);
             }
             router.push("dashboard");
           }
-          else {
-            openSnackbar(output["error"])
-          }
-
         })
-
       }
-
     }
 
     function registerClick () {
       const userObj = {
         "username": username.value,
-        "password": password.value,
-        "avatar_url": "",
         "nickname": username.value,
-        "email": "",
-        "cards": [],
       };
       if (username.value && password.value) {
-        registerUser(userObj).then(() => {
-          openSnackbar("Successfully Register")
-        })
+        registerUser(userObj, password.value)
 
       }
       else {

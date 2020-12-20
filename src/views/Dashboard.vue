@@ -118,17 +118,13 @@
   >
     <div class="mdc-top-app-bar--fixed-adjust">
       <progress-bar
-        v-if="!('cardsListData' in data)"
+        v-if="false"
         style="display: block; overflow: hidden; margin: 0 auto"
       ></progress-bar>
-      <cards-list
+      <cards-grid
         v-else
-        v-bind:cards-list-data="data['cardsListData']"
-      ></cards-list>
-      <span v-if="
-          data.hasOwnProperty('cardsListData') &&
-          data['cardsListData'].length == 0
-        ">Empty Cards List</span>
+        v-bind:cards-list="cardsList"
+      ></cards-grid>
     </div>
     <router-link :to="{ name: 'create' }">
       <button class="create-fab mdc-fab mdc-fab--extended">
@@ -141,8 +137,8 @@
 </template>
 
 <script>
-import cardsList from "@/components/cardsList.vue";
-import { inject, onMounted, provide, reactive, ref } from "vue";
+import cardsGrid from "@/components/cardsGrid.vue";
+import { inject, onMounted, provide, ref } from "vue";
 import { MDCTopAppBar } from "@material/top-app-bar";
 import { MDCDrawer } from "@material/drawer";
 import { MDCMenu } from "@material/menu";
@@ -153,22 +149,16 @@ import { getClipboard, scanQr } from "@/composables/useDashboard"
 export default {
   name: "dashboard",
   components: {
-    cardsList,
+    cardsGrid,
     progressBar,
   },
 
   setup () {
-    const data = reactive({});
+    let cardsList = ref([]);
 
     const refresh = async () => {
-      const output = await getCardsList();
-      if (output["success"]) {
-        data["cardsListData"] = [];
-        console.log("Refreshed Empty", output);
-      } else {
-        data["cardsListData"] = output;
-        console.log("Refreshed", output);
-      }
+      cardsList.value = await getCardsList();
+      console.log(cardsList.value)
     };
     provide("refresh", refresh);
     const openSnackbar = inject("openSnackbar");
@@ -199,7 +189,7 @@ export default {
       let text = await getClipboard()
       let url = new URL(text)
       let splits = url.pathname.split('/')
-      if (url.hostname === 'callet.tk' && splits[1] === 'card') {
+      if (url.hostname === 'callet.tk' && splits[1] === 'cards') {
         let cid = splits[2]
         if (cid.length == 24) {
           let output = await collectCard(cid)
@@ -234,7 +224,7 @@ export default {
     return {
       refresh,
       logOutClick,
-      data,
+      cardsList,
       drawerRef,
       drawer,
       topAppBarRef,

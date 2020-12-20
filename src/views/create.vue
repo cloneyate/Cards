@@ -106,7 +106,6 @@ export default {
     cid: String,
   },
   setup () {
-    const BASEURL = "https://api.callet.tk/";
     const cover_url = ref("");
     const title = ref("");
     const topAppBarRef = ref(null);
@@ -127,15 +126,13 @@ export default {
 
     const openSnackbar = inject("openSnackbar");
     function saveCard () {
-      let time = new Date().getTime();
       let json = {
         title: title.value,
         cover_url: cover_url.value,
-        time,
-        blocks: editorRef.value.getBlocks()
+        blocks: editorRef.value.getBlocks(),
       }
       createCard(json).then((output) => {
-        if (output["success"] == 1) {
+        if (output["ok"] == 1) {
           router.push('dashboard')
           openSnackbar("Successfully created")
         }
@@ -153,7 +150,6 @@ export default {
 
 
     return {
-      BASEURL,
       saveCard,
       topAppBarRef,
       topAppBarMdc,

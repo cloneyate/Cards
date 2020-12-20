@@ -31,22 +31,19 @@
       <span class="material-icons md-36px">copyright</span>
       <span style="line-height:36px">Click to choose logo</span>
     </div>
-    <mcw-dialog v-model="logoDialogOpen">
-      <mcw-dialog-title>Choose logo</mcw-dialog-title>
-      <mcw-dialog-content>
+    <ui-dialog v-model="logoDialogOpen">
+      <ui-dialog-title>Choose logo</ui-dialog-title>
+      <ui-dialog-content>
         <logo-selector ref="selectorRef"></logo-selector>
-      </mcw-dialog-content>
-      <mcw-dialog-footer>
-        <mcw-dialog-button
-          action="dismiss"
+      </ui-dialog-content>
+      <ui-dialog-actions>
+        <ui-button
+          @click="logoDialogOpen=false"
           isDefault
-        >Cancel</mcw-dialog-button>
-        <mcw-dialog-button
-          action="accept"
-          @click="handleDialog"
-        >Confirm</mcw-dialog-button>
-      </mcw-dialog-footer>
-    </mcw-dialog>
+        >Cancel</ui-button>
+        <ui-button @click="handleDialog">Confirm</ui-button>
+      </ui-dialog-actions>
+    </ui-dialog>
   </div>
 </template>
 <script>
@@ -56,6 +53,7 @@ import BlockAction from '../BlockAction.vue'
 export default {
   components: { LogoSelector, BlockAction },
   name: 'base-block',
+  emits: ["update:data", "keydown"],
   props: {
     readOnly: { type: Boolean, default: false },
     index: Number,

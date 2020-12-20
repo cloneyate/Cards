@@ -1,6 +1,14 @@
 <template>
   <div id="container">
-    <transition-group name="flip-list">
+    <div
+      @click="insertBlock('BaseBlock')"
+      v-if="blocks.length==0"
+      style="color: rgba(55, 53, 47, 0.6);padding-left:48px"
+    >Tap here to continue...</div>
+    <transition-group
+      v-else
+      name="flip-list"
+    >
       <div
         class="block-container"
         v-for="(block,index) in blocks"
@@ -9,8 +17,6 @@
         <component
           :is="block.name"
           v-model:data="block.data"
-          @insert-block="handleInsertBlock($event,block.name,index)"
-          @remove="blocks.splice(index,1)"
           :index="index"
           v-focus
         >
@@ -41,14 +47,18 @@ export default {
       mounted: function (el) {
         try {
           el.querySelector(".should-focus").focus()
-        } catch (err) { null }
-      }
-    },
-    test: {
-      mounted: function (el) {
+          document.getSelection().modify('move', 'forward', 'paragraph')
+        } catch (error) { console.log(error) }
+      },
+      beforeUnmount: function (el) {
         try {
-          el.focus()
-        } catch (err) { null }
+          if (el.closest('.block-container').previousElementSibling) {
+            el.closest('.block-container').previousElementSibling.querySelector(".should-focus").focus()
+            document.getSelection().modify('move', 'forward', 'paragraph')
+          }
+        } catch (error) {
+          console.log(error)
+        }
       }
     }
   },
@@ -62,12 +72,6 @@ export default {
     const blocks = reactive([])
     let newId = 1
     function insertBlock (component_name, index = 0, data = { text: '' }) {
-      try {
-        //index = window.getSelection().focusNode.closest('.block-root').getAttribute('index')
-        console.log("获取成功", index)
-      } catch (err) {
-        console.log(err)
-      }
       blocks.splice(index + 1, 0, {
         name: CamelCase2KebabCase(component_name),
         id: newId++,
@@ -75,27 +79,6 @@ export default {
       })
     }
 
-    function handleInsertBlock (args, component_name, index,) {
-      if (args.split) {
-        blocks.splice(index + 1, 0, {
-          name: CamelCase2KebabCase(component_name),
-          id: newId++,
-          data: {
-            text: args.rightText
-          }
-        })
-        blocks[index].data.text = args.leftText
-      }
-      else {
-        blocks.splice(index + 1, 0, {
-          name: CamelCase2KebabCase(component_name),
-          id: newId++,
-          data: {
-            text: ''
-          }
-        })
-      }
-    }
 
     function removeBlock (index) {
       return blocks.splice(index, 1)
@@ -118,7 +101,6 @@ export default {
     }
 
     provide('insertBlock', insertBlock)
-    provide('handleInsertBlock', handleInsertBlock)
     provide('removeBlock', removeBlock)
     provide('switchBlock', switchBlock)
     onMounted(() => {
@@ -134,7 +116,6 @@ export default {
       blocks,
       insertBlock,
       getBlocks,
-      handleInsertBlock
     }
   }
 }

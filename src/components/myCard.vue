@@ -1,12 +1,21 @@
 <template>
+
   <div
     class="mdc-card my-card"
     :class="{'my-card-ex':isExpanded}"
   >
     <div class="mdc-card__primary-action">
-      <h1 id="card_title">{{ cardData.title }}</h1>
-      <div class="my-card-content">
-        <div class="my-card-left">
+      <ui-skeleton
+        v-if="isLoading"
+        :paragraph="{rows:6}"
+      ></ui-skeleton>
+      <template v-else>
+        <h2 id="card_title">{{ cardData.title }}</h2>
+        <div class="my-card-content">
+          <img
+            :src="cardData.cover_url"
+            class="cover"
+          >
           <div
             class="block-container"
             v-for="block in cardData.blocks"
@@ -19,15 +28,9 @@
             ></component>
           </div>
         </div>
-        <div
-          v-if="cardData.cover_url"
-          class="my-card-right"
-        >
-          <img :src="cardData.cover_url">
-        </div>
-      </div>
+      </template>
     </div>
-    <hr class="divider">
+    <ui-divider></ui-divider>
     <div class="mdc-card__actions">
       <div class="mdc-card__action-buttons">
         <button
@@ -52,97 +55,65 @@
         >
           share
         </button>
-        <button
-          id="add-to-favorites"
-          class="material-icons mdc-icon-button mdc-card__action mdc-card__action--icon"
-        >
-          {{ icon_name }}
-        </button>
-        <div class="mdc-menu-surface--anchor">
+        <ui-icon-button
+          v-model="isBookmarked"
+          :toggle="{on:'bookmark',off:'bookmark_border'}"
+        ></ui-icon-button>
+        <ui-menu-anchor>
           <button
             class="material-icons mdc-icon-button mdc-card__action mdc-card__action--icon"
-            @click="openMenu()"
+            @click="isMenuOpen=true"
           >
             more_vert
           </button>
-
-          <div
-            ref="menuRef"
-            class="mdc-menu mdc-menu-surface"
+          <ui-menu
+            v-model="isMenuOpen"
+            position="BOTTOM_START"
           >
-            <ul
-              class="mdc-list"
-              role="menu"
-              aria-hidden="true"
-              aria-orientation="vertical"
-              tabindex="-1"
-            >
-              <li role="menuitem">
-                <router-link
-                  :to="{ name: 'create', params: { cid: cardData._id } }"
-                  class="mdc-list-item"
-                >
-                  <span class="mdc-list-item__ripple"></span>
-                  <span class="mdc-list-item__graphic material-icons ">content_copy</span>
-                  <span class="mdc-list-item__text">Duplicate</span>
-                </router-link>
-              </li>
+            <ui-menuitem>
+              <span class="mdc-list-item__graphic material-icons ">content_copy</span>
+              <ui-menuitem-text>Duplicate</ui-menuitem-text>
+            </ui-menuitem>
 
-              <li
-                class="mdc-list-item"
-                role="menuitem"
-                @click="deleteCardClick(cardData._id)"
-              >
-                <span class="mdc-list-item__ripple"></span>
-                <span class="mdc-list-item__graphic material-icons ">delete</span>
-                <span class="mdc-list-item__text">Delete</span>
-              </li>
-              <li
-                role="separator"
-                class="mdc-list-divider"
-              ></li>
-              <li
-                class="mdc-list-item"
-                role="menuitem"
-              >
-                <span class="mdc-list-item__ripple"></span>
-                <span class="mdc-list-item__graphic material-icons ">alarm</span>
-                <span class="mdc-list-item__text">Alarm</span>
-              </li>
-            </ul>
-          </div>
-        </div>
+            <ui-menuitem @click="deleteCardClick(_id)">
+              <span class="mdc-list-item__graphic material-icons ">delete</span>
+              <span class="mdc-list-item__text">Delete</span>
+            </ui-menuitem>
+            <li
+              role="separator"
+              class="mdc-list-divider"
+            ></li>
+            <ui-menuitem>
+              <span class="mdc-list-item__graphic material-icons ">alarm</span>
+              <span class="mdc-list-item__text">Alarm</span>
+            </ui-menuitem>
+          </ui-menu>
+        </ui-menu-anchor>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-//import cardMenu from "./cardMenu.vue";
-import { MDCMenu } from "@material/menu";
-import { ref, onMounted, inject } from "vue";
-import { deleteCard } from "@/composables/endpoint";
+import { ref, inject } from "vue";
+import { deleteCard, getCard } from "@/composables/endpoint";
 import { shareCard, writeClipboard } from '@/composables/useDashboard'
 
 export default {
   name: "my-card",
   props: {
-    cardData: Object,
+    _id: { type: String, require: true },
+    bookmarked: Boolean
   },
   components: {},
 
-  setup () {
+  setup (props) {
+    const cardData = ref({})
     const isExpanded = ref(false);
-    const icon_name = ref("bookmark_border");
-    const menuRef = ref(null);
-    let menu = null;
-    const openMenu = () => {
-      try {
-        menu.open = true;
-      } catch (error) {
-        console.log(error);
-      }
-    };
+    const isBookmarked = ref(props.bookmarked);
+    const isLoading = ref(true);
+    const isMenuOpen = ref(false);
+    console.log(isBookmarked.value);
 
 
 
@@ -150,7 +121,7 @@ export default {
     const openSnackbar = inject("openSnackbar");
     const deleteCardClick = (cid) => {
       deleteCard(cid).then((output) => {
-        if (output["success"] == 1) {
+        if (output["ok"] == 1) {
           openSnackbar();
           refreshCards();
         }
@@ -163,39 +134,37 @@ export default {
         shareCard(cid)
       } catch (err) { console.log(err) }
 
-      writeClipboard("https://callet.tk/card/" + cid)
+      writeClipboard("https://callet.tk/cards/" + cid)
       openSnackbar('Export to clipboard successfully')
     }
 
 
-
-
-    onMounted(() => {
-      menu = new MDCMenu(menuRef.value);
-    });
+    getCard(props._id).then((output) => { cardData.value = output; isLoading.value = false; })
 
 
     return {
       isExpanded,
-      menuRef,
-      menu,
-      icon_name,
-      openMenu,
       deleteCardClick,
-      shareCardClick
+      shareCardClick,
+      cardData,
+      isBookmarked,
+      isLoading,
+      isMenuOpen
     };
   },
 };
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
+@use 'balm-ui/components/core';
+@use 'balm-ui/components/skeleton/skeleton';
 .my-card {
   width: 360px;
-  max-height: 300px;
-  transition: max-height 0.8s;
+  height: 300px;
+  transition: height 0.4s ease-in;
 }
 
 .my-card-ex {
-  max-height: 100%;
+  height: 100%;
 }
 
 .mdc-card__primary-action {
@@ -203,60 +172,30 @@ export default {
 }
 
 #card_title {
-  margin: 0;
+  margin-top: 0;
+  margin-bottom: 19px;
+}
+.mdc-skeleton-title {
+  height: 24px;
+  margin-top: 0;
 }
 
-.my-card-content {
-  display: flex;
-  flex-direction: row;
-}
-
-.my-card-left {
-  flex: 2 1 0;
-}
-
-.my-card-right {
-  flex: 1 1 0;
-}
-
-.my-card-right img {
-  max-height: 100%;
-  max-width: 100%;
-}
-
-.divider {
-  margin: 0;
-  opacity: 30%;
-}
-
-.hover-button {
-  display: none;
-}
-
-.block-root button {
-  border: 0;
-  padding: 0;
-  background: white;
-}
-
-.hover-button {
-  border: 0;
-  padding: 0;
-  background: white;
-  visibility: hidden;
-  float: left;
-}
-
-.block-root button:focus {
-  outline: none;
-}
-
-.block-root:hover .hover-button {
-  visibility: visible;
+.cover {
+  max-width: 120px;
+  float: right;
+  margin-left: 8px;
 }
 
 .block-container {
   margin-block: 2px;
+}
+
+.mdc-card__actions {
+  height: 52px;
+}
+
+.mdc-card__primary-action {
+  flex-grow: 1;
 }
 </style>
 
