@@ -95,8 +95,8 @@
 </template>
 
 <script>
-import { ref, inject } from "vue";
-import { deleteCard, getCard } from "@/composables/endpoint";
+import { ref, inject, watch } from "vue";
+import { deleteCard, getCard, bookmarkCard } from "@/composables/endpoint";
 import { shareCard, writeClipboard } from '@/composables/useDashboard'
 
 export default {
@@ -141,6 +141,15 @@ export default {
 
     getCard(props._id).then((output) => { cardData.value = output; isLoading.value = false; })
 
+    watch(isBookmarked, (isBookmarked) => {
+      bookmarkCard(props._id, isBookmarked).then((output) => {
+        if (output["ok"] == 1) {
+          if (isBookmarked == true) openSnackbar("Bookmarked successfully")
+          else { openSnackbar("Cancel successfully") }
+        }
+        else { openSnackbar(output["detail"]) }
+      })
+    })
 
     return {
       isExpanded,

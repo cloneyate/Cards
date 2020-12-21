@@ -105,6 +105,15 @@
                 <span class="mdc-list-item__graphic material-icons">content_paste</span>
                 <span class="mdc-list-item__text">Import via clipboard</span>
               </li>
+              <li
+                role="menuitem"
+                class="mdc-list-item"
+                @click="refresh"
+              >
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__graphic material-icons">refresh</span>
+                <span class="mdc-list-item__text">Refresh</span>
+              </li>
             </ul>
           </div>
         </div>
@@ -193,9 +202,12 @@ export default {
         let cid = splits[2]
         if (cid.length == 24) {
           let output = await collectCard(cid)
-          if (output['success'] === 1) {
-            openSnackbar('Import Successfully')
+          if (output['ok'] === 1) {
+            openSnackbar("Imported successfully")
             refresh()
+          }
+          else {
+            openSnackbar(output["detail"])
           }
         }
 

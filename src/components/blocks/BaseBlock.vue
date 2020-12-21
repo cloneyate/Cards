@@ -33,8 +33,8 @@ export default {
   emits: ["update:data", "keydown"],
 
   setup (props, context) {
-    const insertBlock = inject('insertBlock')
-    const removeBlock = inject('removeBlock')
+    const insertBlock = props.readOnly ? null : inject('insertBlock')
+    const removeBlock = props.readOnly ? null : inject('removeBlock')
     const selection = computed(() => {
       return window.getSelection()
     })
@@ -75,8 +75,9 @@ export default {
 <style>
 .para-input {
   min-width: 150px;
-  margin-top: 2px;
+  margin-top: auto;
   margin-bottom: auto;
   outline: 0;
+  line-height: 1.5;
 }
 </style>

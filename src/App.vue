@@ -11,6 +11,7 @@
 <script>
 
 import mySnackbar from "./components/mySnackbar.vue";
+import { getProfile } from "./composables/endpoint"
 import {
   defineComponent,
   provide,
@@ -22,7 +23,7 @@ export default defineComponent({
     mySnackbar
   },
   setup () {
-    const snack_label_text = ref("Deleted Successfully");
+    const snack_label_text = ref("");
     const snack_action_text = ref("OK");
     const mySnackbarRef = ref(null);
     const openSnackbar = (label_text = "Deleted Successfully", action_text = "OK") => {
@@ -37,6 +38,11 @@ export default defineComponent({
 
     provide("openSnackbar", openSnackbar);
 
+    getProfile().then((output) => {
+      for (let key in output) {
+        localStorage.setItem(key, output[key])
+      }
+    })
 
 
     return {
