@@ -1,5 +1,5 @@
-const url = "http://" + window.location.hostname + ":8000"
-//const url = "https://api.callet.tk"
+//const url = "http://" + window.location.hostname + ":8000"
+const url = "https://api.callet.tk"
 
 export async function registerUser (json, password) {
   let output = await fetch(url + "/users/?password=" + password, {
@@ -26,6 +26,27 @@ export async function auth (username, password) {
       "Content-Type": "application/x-www-form-urlencoded",
     },
     body: `username=${username}&password=${password}`,
+  })
+    .then((response) => response.json())
+    .then((myJson) => {
+      console.log(myJson)
+      return myJson
+    });
+  return output
+}
+
+export async function collectCard (cid) {
+  let output = await fetch(url + "/users/me/cards/", {
+    method: "POST",
+    mode: "cors",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": localStorage.getItem("token_type") + " " + localStorage.getItem("access_token")
+    },
+    body: JSON.stringify({
+      "_id": cid,
+      "bookmarked": false
+    })
   })
     .then((response) => response.json())
     .then((myJson) => {
@@ -69,19 +90,7 @@ export async function createCard (json) {
     });
 
   if (output1["_id"]) {
-    let output2 = await fetch(url + "/users/me/cards/" + output1['_id'], {
-      method: "POST",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": localStorage.getItem("token_type") + " " + localStorage.getItem("access_token")
-      },
-    })
-      .then((response) => response.json())
-      .then((myJson) => {
-        console.log(myJson)
-        return myJson
-      });
+    let output2 = await collectCard(output1["_id"])
     return output2
   }
   else {
@@ -123,22 +132,7 @@ export async function deleteCard (cid) {
   return output
 }
 
-export async function collectCard (cid) {
-  let output = await fetch(url + "/users/me/cards/" + cid, {
-    method: "POST",
-    mode: "cors",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": localStorage.getItem("token_type") + " " + localStorage.getItem("access_token")
-    },
-  })
-    .then((response) => response.json())
-    .then((myJson) => {
-      console.log(myJson)
-      return myJson
-    });
-  return output
-}
+
 
 export async function getProfile () {
   let output = await fetch(url + "/users/me/", {

@@ -113,10 +113,6 @@ export default {
     const isBookmarked = ref(props.bookmarked);
     const isLoading = ref(true);
     const isMenuOpen = ref(false);
-    console.log(isBookmarked.value);
-
-
-
     const refreshCards = inject("refresh");
     const openSnackbar = inject("openSnackbar");
     const deleteCardClick = (cid) => {
