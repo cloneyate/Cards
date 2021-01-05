@@ -45,4 +45,12 @@ export async function scanQr () {
   return result
 }
 
+export async function changeStatusBar (color) {
+  const { StatusBar } = Plugins
+  try {
+    StatusBar.setBackgroundColor({ color })
+  } catch (error) {
+    console.log(error)
+  }
+}
 

@@ -20,7 +20,7 @@
         :contenteditable="!readOnly"
         v-text="logoCaption"
         class="should-focus logo-caption"
-        @input="$emit('update:data',{text:$event.target.value,logoName: logoNameRef})"
+        @input="handleInput"
       ></h4>
     </template>
     <div
@@ -73,12 +73,16 @@ export default {
       context.emit('update:data', { text: logoCaption.value, logoName: logoNameRef.value })
       logoDialogOpen.value = false
     }
+    const handleInput = () => {
+      context.emit('update:data', { text: event.target.innerText, logoName: logoNameRef.value })
+    }
     return {
       logoCaption,
       logoNameRef,
       logoDialogOpen,
       selectorRef,
-      handleDialog
+      handleDialog,
+      handleInput
     }
   }
 

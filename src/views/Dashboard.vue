@@ -5,11 +5,14 @@
   >
     <div class="mdc-drawer__header">
       <img
-        :src="localStorage.getItem('avatar_url')"
+        :src="localStorage.avatar_url"
         style="width: 64px; height: 64px; border-radius: 50%; margin-top: 24px"
       />
-      <h3 class="mdc-drawer__title">{{ localStorage.getItem("nickname") }}</h3>
-      <h6 class="mdc-drawer__subtitle">{{ localStorage.getItem("email") }}</h6>
+      <h3 class="mdc-drawer__title">{{ localStorage.nickname }}</h3>
+      <h6
+        class="mdc-drawer__subtitle"
+        v-if="localStorage.email!='null'"
+      >{{ localStorage.email }}</h6>
     </div>
     <div class="mdc-drawer__content">
       <nav class="mdc-list">
@@ -66,9 +69,6 @@
         <span class="mdc-top-app-bar__title">Cards</span>
       </section>
       <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
-        <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button">
-          search
-        </button>
         <div class="mdc-menu-surface--anchor">
           <button
             class="material-icons mdc-icon-button mdc-top-app-bar__navigation-icon"
@@ -88,6 +88,7 @@
               tabindex="-1"
             >
               <li
+                v-show="false"
                 role="menuitem"
                 class="mdc-list-item"
                 @click="scanQr"
@@ -103,7 +104,7 @@
               >
                 <span class="mdc-list-item__ripple"></span>
                 <span class="mdc-list-item__graphic material-icons">content_paste</span>
-                <span class="mdc-list-item__text">Import via clipboard</span>
+                <span class="mdc-list-item__text">Import via Clipboard</span>
               </li>
               <li
                 role="menuitem"
@@ -127,7 +128,7 @@
   >
     <div class="mdc-top-app-bar--fixed-adjust">
       <progress-bar
-        v-if="false"
+        v-if="isLoading"
         style="display: block; overflow: hidden; margin: 0 auto"
       ></progress-bar>
       <cards-grid
@@ -151,10 +152,11 @@ import { inject, onMounted, provide, ref } from "vue";
 import { MDCTopAppBar } from "@material/top-app-bar";
 import { MDCDrawer } from "@material/drawer";
 import { MDCMenu } from "@material/menu";
-import { getCardsList, collectCard } from "@/composables/endpoint";
+import { getProfile, getCardsList, collectCard } from "@/composables/endpoint";
 import progressBar from "@/components/progressBar";
 import router from "@/router";
 import { getClipboard, scanQr } from "@/composables/useDashboard"
+
 export default {
   name: "dashboard",
   components: {
@@ -164,9 +166,16 @@ export default {
 
   setup () {
     let cardsList = ref([]);
-
+    const isLoading = ref(false);
     const refresh = async () => {
+      isLoading.value = true;
       cardsList.value = await getCardsList();
+      getProfile().then((output) => {
+        for (let key in output) {
+          localStorage.setItem(key, output[key])
+        }
+      })
+      isLoading.value = false;
       console.log(cardsList.value)
     };
     provide("refresh", refresh);
@@ -220,6 +229,7 @@ export default {
 
     onMounted(() => {
       refresh();
+
       topAppBar = MDCTopAppBar.attachTo(topAppBarRef.value);
       drawer = MDCDrawer.attachTo(drawerRef.value);
       topAppBar.setScrollTarget(mainContentRef.value);
@@ -247,7 +257,8 @@ export default {
       menuMdc,
       openMenu,
       importViaClip,
-      scanQr
+      scanQr,
+      isLoading,
     };
   },
 };

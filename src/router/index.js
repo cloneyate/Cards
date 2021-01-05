@@ -44,7 +44,8 @@ const router = createRouter({
 
 router.beforeEach((to) => {
   const isAuthenticated = localStorage.getItem('access_token') ? true : false;
-  if (to.name !== 'login' && !isAuthenticated) return { name: 'login' }
+  if (to.name !== 'login' && to.name !== 'card' && !isAuthenticated) return { name: 'login' }
+  if (to.name == 'login' && isAuthenticated) return false
 })
 
 

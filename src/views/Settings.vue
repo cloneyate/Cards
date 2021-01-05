@@ -1,11 +1,8 @@
 <template>
-  <header
-    class="mdc-top-app-bar mdc-top-app-bar--fixed"
-    ref="topAppBarRef"
-  >
+  <header class="mdc-top-app-bar mdc-top-app-bar--fixed">
     <div class="mdc-top-app-bar__row">
       <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
-        <router-link to="dashboard">
+        <router-link to="/dashboard">
           <button class="material-icons mdc-top-app-bar__action-item mdc-icon-button">
             arrow_back
           </button>
@@ -44,7 +41,11 @@
             <ui-icon>navigate_next</ui-icon>
           </div>
           <ui-divider></ui-divider>
-          <div class="sub-section">
+          <div
+            class="sub-section"
+            v-ripple
+            @click="passDialogOpen=true"
+          >
             <label class="section-first">Password</label>
             <label>********</label>
             <ui-icon>navigate_next</ui-icon>
@@ -62,11 +63,59 @@
             <ui-icon>navigate_next</ui-icon>
           </div>
         </div>
-        <div style="padding-top:8px;display:flex;justify-content:flex-end;width:calc(100% - 80px)">
-          <ui-button raised>Save</ui-button>
-        </div>
-        <router-view></router-view>
       </div>
+      <ui-dialog v-model="passDialogOpen">
+        <ui-dialog-title>Change Password</ui-dialog-title>
+        <ui-dialog-content>
+          <ui-form
+            class="cp-form"
+            nowrap
+            label-width="120"
+          >
+            <template #default="{ actionClass }">
+              <ui-form-field>
+                <label>Old password</label>
+                <ui-textfield
+                  input-type="password"
+                  required
+                ></ui-textfield>
+              </ui-form-field>
+              <ui-form-field>
+                <label>New password</label>
+                <ui-textfield
+                  input-type="password"
+                  required
+                  helper-text-id="pw-validation-msg"
+                  pattern=".{8,}"
+                ></ui-textfield>
+              </ui-form-field>
+              <ui-textfield-helper
+                id="pw-validation-msg"
+                visible
+                validMsg
+              >
+                Must be at least 8 characters long
+              </ui-textfield-helper>
+              <ui-form-field>
+                <label>New password</label>
+                <ui-textfield
+                  input-type="password"
+                  required
+                  pattern=".{8,}"
+                ></ui-textfield>
+              </ui-form-field>
+              <ui-form-field :class="actionClass">
+                <ui-button
+                  outlined
+                  @click="passDialogOpen=false"
+                >Cancel</ui-button>
+                <ui-button raised>Submit</ui-button>
+
+              </ui-form-field>
+            </template>
+          </ui-form>
+        </ui-dialog-content>
+      </ui-dialog>
     </div>
   </main>
 </template>
@@ -79,8 +128,10 @@ export default {
   setup () {
     const profile = ref({})
     getProfile().then((output) => { profile.value = output })
+    const passDialogOpen = ref(false)
     return {
-      profile
+      profile,
+      passDialogOpen
     }
   }
 }
@@ -116,5 +167,10 @@ export default {
 
 .section-second {
   flex: 1 1 auto;
+}
+
+.cp-form > .mdc-form-field {
+  margin-top: 16px;
+  margin-bottom: 16px;
 }
 </style>

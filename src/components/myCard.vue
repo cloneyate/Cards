@@ -4,7 +4,10 @@
     class="mdc-card my-card"
     :class="{'my-card-ex':isExpanded}"
   >
-    <div class="mdc-card__primary-action">
+    <div
+      class="mdc-card__primary-action"
+      @click="openCard(_id)"
+    >
       <ui-skeleton
         v-if="isLoading"
         :paragraph="{rows:6}"
@@ -34,6 +37,7 @@
     <div class="mdc-card__actions">
       <div class="mdc-card__action-buttons">
         <button
+          v-show="false"
           class="mdc-button mdc-card__action mdc-card__action--button"
           @click="isExpanded=!isExpanded"
         >
@@ -98,6 +102,7 @@
 import { ref, inject, watch } from "vue";
 import { deleteCard, getCard, bookmarkCard } from "@/composables/endpoint";
 import { shareCard, writeClipboard } from '@/composables/useDashboard'
+import router from "@/router";
 
 export default {
   name: "my-card",
@@ -134,6 +139,10 @@ export default {
       openSnackbar('Export to clipboard successfully')
     }
 
+    const openCard = (cid) => {
+      router.push({ path: `/cards/${cid}` })
+    }
+
 
     getCard(props._id).then((output) => { cardData.value = output; isLoading.value = false; })
 
@@ -141,7 +150,7 @@ export default {
       bookmarkCard(props._id, isBookmarked).then((output) => {
         if (output["ok"] == 1) {
           if (isBookmarked == true) openSnackbar("Bookmarked successfully")
-          else { openSnackbar("Cancel successfully") }
+          else { openSnackbar("Unbookmarked successfully") }
         }
         else { openSnackbar(output["detail"]) }
       })
@@ -154,7 +163,8 @@ export default {
       cardData,
       isBookmarked,
       isLoading,
-      isMenuOpen
+      isMenuOpen,
+      openCard
     };
   },
 };

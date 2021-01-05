@@ -11,7 +11,8 @@
 <script>
 
 import mySnackbar from "./components/mySnackbar.vue";
-import { getProfile } from "./composables/endpoint"
+import { changeStatusBar } from './composables/useDashboard'
+
 import {
   defineComponent,
   provide,
@@ -23,6 +24,7 @@ export default defineComponent({
     mySnackbar
   },
   setup () {
+    changeStatusBar("#6200ee")
     const snack_label_text = ref("");
     const snack_action_text = ref("OK");
     const mySnackbarRef = ref(null);
@@ -38,11 +40,7 @@ export default defineComponent({
 
     provide("openSnackbar", openSnackbar);
 
-    getProfile().then((output) => {
-      for (let key in output) {
-        localStorage.setItem(key, output[key])
-      }
-    })
+
 
 
     return {

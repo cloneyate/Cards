@@ -60,14 +60,15 @@
 </template>
 
 <script>
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, reactive, ref, inject } from "vue";
 import { MDCTextField } from "@material/textfield";
 import router from "@/router";
 //import postUser from "@/composables/user.js"
-import { auth, registerUser } from "@/composables/endpoint.js"
+import { auth, registerUser, getProfile } from "@/composables/endpoint.js"
 
 export default {
   setup () {
+    const openSnackbar = inject("openSnackbar");
     const username = ref("");
     const password = ref("");
     const usernameRef = ref(null);
@@ -91,27 +92,37 @@ export default {
             for (const key in output) {
               localStorage.setItem(key, output[key]);
             }
-            router.push("dashboard");
+            getProfile().then((output) => {
+              for (let key in output) {
+                localStorage.setItem(key, output[key])
+              }
+              router.push("dashboard");
+            })
+          }
+          else {
+            openSnackbar(output["detail"])
           }
         })
+
       }
     }
 
     function registerClick () {
-      const userObj = {
-        "username": username.value,
-        "nickname": username.value,
-      };
-      if (username.value && password.value) {
-        registerUser(userObj, password.value)
 
+      if (checkInput()) {
+        const userObj = {
+          "username": username.value,
+          "nickname": username.value,
+          "avatar_url": "/assets/defaultAvatar.png"
+        };
+        registerUser(userObj, password.value).then((output) => {
+          if (output["_id"]) {
+            openSnackbar("Register successfully")
+            loginClick()
+          }
+
+        })
       }
-      else {
-        username.value ? null : errors[0] = 'Please input username'
-        password.value ? null : errors[1] = 'Please input password'
-      }
-
-
     }
 
     onMounted(() => {

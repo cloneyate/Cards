@@ -34,7 +34,7 @@
   >
     <div class="mdc-top-app-bar--fixed-adjust">
       <div
-        id="cover-wrapper"
+        class="cover-wrapper"
         v-if="cover_url"
       >
         <img
@@ -134,7 +134,7 @@ export default {
       createCard(json).then((output) => {
         if (output["ok"] == 1) {
           router.push('dashboard')
-          openSnackbar("Successfully created")
+          openSnackbar("Created successfully")
         }
         else {
           openSnackbar('Something went wrong`(*>﹏<*)′')
@@ -177,7 +177,7 @@ export default {
   padding-left: 48px;
 }
 
-#cover-wrapper {
+.cover-wrapper {
   display: flex;
   justify-content: center;
   position: relative;
