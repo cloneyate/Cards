@@ -55,12 +55,10 @@
 
 <script>
 import { ref } from 'vue'
-import myCard from '../components/myCard'
 import { getCard } from "@/composables/endpoint";
 
 export default {
   name: "card",
-  components: { myCard },
   props: {
     cid: {
       type: String,
